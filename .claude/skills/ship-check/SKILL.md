@@ -7,7 +7,7 @@ disable-model-invocation: true
 Go through each item, actually run the command where there is one, and report a short PASS/FAIL list. Fix only what's quick and safe; flag the rest.
 
 1. `bash scripts/check.sh` passes locally.
-2. The deployed backend works: ask the user for the Render URL if it isn't in CLAUDE.md, then run `SMOKE_BASE_URL=<url> backend/venv/Scripts/python backend/smoke_test.py` (or `venv/bin/python` on Mac/Linux). Note that a Render free-tier cold start can take ~30s.
+2. The deployed backend works, including CORS for the deployed frontend: take both URLs from CLAUDE.md → Deployed (ask if not filled in), then run `SMOKE_ORIGIN=<vercel-url> backend/venv/Scripts/python backend/smoke_test.py <render-url>` (or `venv/bin/python` on Mac/Linux). A Render free-tier cold start can take 30s or more — a slow first request is not a failure. Then `backend/venv/Scripts/python backend/seed.py <render-url>` so the demo account exists on the deployed backend.
 3. The deployed frontend loads and shows the backend as reachable (check the Vercel URL in the browser if available; otherwise ask the user to).
 4. `git status` is clean and the latest commit is pushed (`git status -sb` shows no "ahead").
 5. README.md describes the actual project (what it is, how to run it) — not the starter template text.

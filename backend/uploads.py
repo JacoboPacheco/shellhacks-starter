@@ -1,9 +1,11 @@
 import uuid
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException, Request, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile
 
+from auth import get_current_user
 from limiter import limiter
+from models import User
 
 router = APIRouter(prefix="/api", tags=["uploads"])
 
@@ -32,9 +34,9 @@ def sniff(contents: bytes) -> str | None:
 
 @router.post("/upload")
 @limiter.limit("60/minute")
-async def upload_file(request: Request, file: UploadFile):
-    # read at most limit+1 bytes: a huge file must not be pulled into memory
-    # just to be rejected (the free-tier instance has 512MB)
+async def upload_file(request: Request, file: UploadFile, user: User = Depends(get_current_user)):
+    # Oversized requests are refused by the Content-Length middleware in main.py before
+    # the body is read at all; this read cap is the backstop for bodies with no length.
     contents = await file.read(MAX_UPLOAD_BYTES + 1)
     if len(contents) > MAX_UPLOAD_BYTES:
         raise HTTPException(status_code=400, detail="File too large (max 5MB)")

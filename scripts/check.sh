@@ -37,15 +37,17 @@ echo "== frontend build =="
 (cd "$ROOT/frontend" && npm run build --silent >/dev/null) && echo "build ok" || failed+=("frontend build")
 
 echo "== backend smoke test (live server on :$PORT) =="
-# a server left over from a crashed run would answer the health check with stale code
-stop_server
+# :$PORT is reserved for this script; anything answering there is a leftover from a
+# crashed run and would serve stale code, so replace it
 if curl -sf "http://localhost:$PORT/api/health" >/dev/null 2>&1; then
-  echo "port $PORT is already serving something else — stop it and rerun"
-  exit 1
+  echo "(stopping a leftover check server on :$PORT)"
+  stop_server
 fi
 rm -f "$ROOT/backend/check.db"
+# GEMINI_API_KEY is blanked so the check never spends real quota or depends on the
+# network: it verifies the deterministic "not configured" path instead.
 # exec so SERVER_PID is the server itself, not a wrapper subshell
-(cd "$ROOT/backend" && JWT_SECRET="${JWT_SECRET:-check-only-secret}" DATABASE_URL="sqlite:///./check.db" \
+(cd "$ROOT/backend" && JWT_SECRET="${JWT_SECRET:-check-only-secret}" DATABASE_URL="sqlite:///./check.db" GEMINI_API_KEY="" \
   exec "$PY" -m uvicorn main:app --port "$PORT" > "$ROOT/backend/check-server.log" 2>&1) &
 SERVER_PID=$!
 

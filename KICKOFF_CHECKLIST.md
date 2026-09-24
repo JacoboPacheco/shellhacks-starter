@@ -1,43 +1,50 @@
 # Kickoff day runbook
 
-**ShellHacks 2026: Sept 25–27, FIU Graham Center (Modesto Maidique Campus), 36 hours of hacking.** Judging criteria, equally weighted: Completion, Originality, Design, Technology, Practicality. Submission is on Devpost and must have your GitHub repo attached — check the Hacker Guide / Discord on day 1 for the exact deadline and whether a video is required.
+**ShellHacks 2026: Sept 25–27, FIU Graham Center (Modesto Maidique Campus), 36 hours of hacking.** Judging criteria, equally weighted: Completion, Originality, Design, Technology, Practicality. Submission is on Devpost with your GitHub repo attached — check the Hacker Guide / Discord on day 1 for the exact deadline and whether a video is required. Everything runs on the laptop; git push is the backup.
 
-## Before the event (once, from this practice folder)
+## Before the event (tonight, in this order — then sleep)
+- [ ] **Pick your idea.** Two candidates, one sentence each, plus the one moment that makes a judge react. Decide. The sponsor list at kickoff only adjusts it.
 - [ ] Put the starter on GitHub: `gh auth login`, then `gh repo create shellhacks-starter --public --source . --push`
-- [ ] On github.com → the repo → Settings → tick **Template repository**. Kickoff day then starts from a one-liner, and the new repo shows "generated from …/shellhacks-starter" — built-in disclosure of the pre-existing code.
-- [ ] Gaming PC set up and reachable from the laptop over a phone hotspot (REMOTE.md)
-- [ ] Free API keys created now, not at hour 3, and saved somewhere you can paste from: Gemini (aistudio.google.com/apikey — most ideas end up wanting an LLM call; the backend's `llm.py` is wired for it, defaulting to a Flash-Lite model because that's the one with a usable free quota — confirm at aistudio.google.com/rate-limit), Unsplash (for photos). If a sponsor track you care about has an API, get that key too.
+- [ ] On github.com → the repo → Settings → tick **Template repository**
+- [ ] Dry-run the kickoff command so it's not new on the day: in `C:\dev`, `gh repo create kickoff-test --public --clone --template <your-github-user>/shellhacks-starter`, confirm `backend\.env` and `app.db` are NOT in it, then delete the test repo (`gh repo delete kickoff-test --yes`) and the folder
+- [ ] Free API keys, saved where you can paste from: Gemini (aistudio.google.com/apikey — `llm.py` is wired for it; the default model is a Flash-Lite because that's the one with a usable free quota, confirm at aistudio.google.com/rate-limit), Unsplash (photos). A sponsor track you care about with an API → that key too
+- [ ] 15 minutes: learn to open the browser console (F12 → Console and Network tabs) and paste the red text to Claude. This is the one skill that unblocks a stuck AI on a frontend bug.
+- [ ] 60-minute timed mini-build from the template: `/spec` a throwaway idea, build one feature end to end (table → endpoint → page), `/check`, commit. This tests your loop, not the code. Write down where you got stuck.
+- [ ] Practice deploy per DEPLOY.md, timeboxed to 45 minutes. If Render/Vercel fight you, stop and do it at hour 4 of the event instead. Delete the practice services afterwards (DEPLOY.md top note).
+- [ ] Sleep 6+ hours. Pack: laptop, charger, power strip, phone + charger, battery bank, headphones.
 
 ## First 15 minutes
-- [ ] On the gaming PC (over Remote-SSH from the laptop), in `C:\dev` — **outside OneDrive**, which is slow and locks files mid-build:
+- [ ] In `C:\dev` (outside OneDrive — it's slow and locks files mid-build):
   `gh repo create <project-name> --public --clone --template <your-github-user>/shellhacks-starter`
-  This creates the project's own GitHub repo, with event-time history only, and clones it. Don't copy the practice folder; it drags along your real `.env` and test data.
+  The project gets its own GitHub repo with event-time history only, and a "generated from" badge that discloses the template.
 - [ ] Paste the sponsor challenge list (from the opening ceremony / event site) into CLAUDE.md under "Sponsor / company challenges" — `/spec` reads it from there
-- [ ] Do the one-time setup in README.md (venv, `pip install`, `npm install`, `backend\.env` with a new `JWT_SECRET`)
+- [ ] Do the one-time setup in README.md (venv, `pip install`, `npm install`, `backend\.env` with a new `JWT_SECRET` and your `GEMINI_API_KEY`)
 - [ ] `.\check.ps1` → must say `ALL CHECKS PASSED` before you write a single feature
-- [ ] Start Claude Code in the repo and **accept the "trust this folder" prompt** — until you do, the permission allowlist and hooks in `.claude/settings.json` are silently ignored. Also accept the prompt to install the repo's plugins (`frontend-design`, `example-skills`) — they're registered in the same file, so a fresh machine gets them automatically. If no prompt appears, run `/plugin` and check they're listed; otherwise install them from there.
-- [ ] Run `/hooks` once to confirm the "Checking edited file" hook is listed
-- [ ] Run `/spec <your idea in a sentence>`, answer its questions — it writes SPEC.md, fills in CLAUDE.md, and commits "Start ShellHacks project"
-- [ ] `/clear`, then tell Claude Code to build from SPEC.md
+- [ ] Start Claude Code in the repo and **accept the "trust this folder" prompt** — until you do, the permission allowlist and hooks in `.claude/settings.json` are silently ignored. Also accept the prompt to install the repo's plugins (`frontend-design`, `example-skills`). If no prompt appears, `/plugin` and check they're listed.
+- [ ] `/model` → pick the bigger model for the spec; run `/spec <your idea in a sentence>`, answer its questions — it writes SPEC.md, fills in CLAUDE.md, and commits "Start ShellHacks project". Timebox: 20 minutes; you already chose the idea.
+- [ ] `/clear`, `/model` → Sonnet, then "build from SPEC.md, walking skeleton first"
 
 ## Building
-- [ ] Dev servers over Remote-SSH: **don't use `dev.ps1`** (its windows open on the gaming PC's screen, not yours). In VS Code, open two terminals and run the backend and frontend commands from CLAUDE.md → Commands. VS Code forwards port 5173 automatically when Vite prints its URL; if the laptop browser shows nothing, add 5173 in the **Ports** panel. The backend needs no forward — Vite proxies `/api` to it.
+- [ ] `.\dev.ps1` from a standalone PowerShell window keeps both servers up (backend auto-reloads)
+- [ ] Model plan: build on Sonnet. Switch up (`/model`) for hard debugging when Sonnet has failed twice, and for the final review. Switch back after.
+- [ ] Walking skeleton by hour 10: the ugliest version of the exact demo path working end to end. Then iterate. Never breadth-first.
 - [ ] Claude keeps CLAUDE.md's "Current status" and "Decisions" updated after each commit — glance at them when you come back from a break; they're the session's memory
-- [ ] Three Claude Code moves worth knowing: a change made things worse → press **Esc twice** and rewind to before it; a side question you don't want cluttering the session → start it with `/btw`; the session feels confused after many corrections → `/clear` and restate the task (Claude will re-read CLAUDE.md, SPEC.md, and Current status)
+- [ ] Three Claude Code moves worth knowing: a change made things worse → press **Esc twice** and rewind to before it; a side question you don't want cluttering the session → start it with `/btw`; the session feels confused after many corrections → `/clear` and restate the task (Claude re-reads CLAUDE.md, SPEC.md, and Current status)
 - [ ] Watch the status line at the bottom: `ctx` is how full Claude's memory is (it compacts itself near the top — fine), `5h` is your usage limit, `↑N` is unpushed commits
-- [ ] Deploy early (see DEPLOY.md), not at hour 30 — a broken deploy found early is a non-event; found late is a crisis
-- [ ] `git push` every few hours — backup if the gaming PC dies, and it keeps the timestamped history safe (Claude reminds you at 4 unpushed commits)
+- [ ] Deploy early (see DEPLOY.md), once, by hour 4 — then turn Auto-Deploy off and redeploy manually a few times a day. A broken deploy found early is a non-event; found late is a crisis.
+- [ ] `git push` every couple of hours — backup if the laptop dies, and it keeps the timestamped history safe (Claude nags at 2 unpushed commits)
 - [ ] Re-check Scope every few hours — cut "nice to have" the moment you're behind
+- [ ] Sleep night one. Solo with no sleep produces garbage on day two.
 
 ## Last 3 hours — stop building new features
 - [ ] Freeze features, fix only what's broken
-- [ ] Render → service → Settings → Build & Deploy → **Auto-Deploy: No**. From here on pushes are backups only; ship a chosen commit with "Manual Deploy" so a stray push can't wipe the demo data mid-judging
-- [ ] **After the final deploy: create the demo account and demo data again — every deploy erases them** — and write the login on paper
-- [ ] `/ship-check` — runs every readiness check, including the rules disclosure line
-- [ ] `/pitch` — drafts the demo script, Devpost writeup, and judge Q&A from what actually got built; read it out loud once with a timer
-- [ ] Full run-through of the demo path on the deployed URL, not localhost
-- [ ] Record the 2-minute demo video (your backup if wifi dies)
+- [ ] Judging is table-to-table: **demo from your laptop's localhost** (`.\dev.ps1`, `seed.py` for fresh demo data). The deployed URL is for Devpost and for judges who click later.
+- [ ] Final manual deploy on Render + Vercel, then `backend\venv\Scripts\python backend\seed.py <render-url>` — every deploy erases the demo account and data. Write the demo login on paper.
+- [ ] `/pitch` — 30-second and 2-minute versions, Devpost writeup, screenshots, project README. Read the 2-minute one out loud with a timer; memorize the 30-second one.
+- [ ] `/ship-check` — every readiness check, including the rules disclosure line and a secrets scan
+- [ ] Full run-through of the demo path on both localhost and the deployed URL
+- [ ] Record the 2-minute demo video (your backup if the laptop dies at the table)
 
 ## Before you sleep / leave
-- [ ] Confirm the deployed URL still works from a phone on cellular data (not the venue wifi)
+- [ ] Confirm the deployed URL works from a phone on cellular data (not the venue wifi)
 - [ ] Charge everything

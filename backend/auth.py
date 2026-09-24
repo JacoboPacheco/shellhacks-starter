@@ -7,6 +7,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, Field, field_validator
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from database import get_db
@@ -92,7 +93,12 @@ def signup(request: Request, body: SignupRequest, db: Session = Depends(get_db))
 
     user = User(email=body.email, hashed_password=pwd_context.hash(body.password))
     db.add(user)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        # two signups for the same email raced past the check above
+        db.rollback()
+        raise HTTPException(status_code=400, detail="Email already registered")
 
     return TokenResponse(access_token=create_access_token(user.email))
 

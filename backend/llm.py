@@ -4,6 +4,7 @@ LLM helper (Gemini, free tier). Usage from any router:
     from llm import complete
     text = await complete("Summarize this: ...", system="You are terse.")
     data = await complete(prompt, json_mode=True)   # returns a JSON string
+    text = await complete(prompt, fallback="(AI offline) Here's an example answer…")  # never raises
 
 Needs GEMINI_API_KEY in backend/.env (free key: https://aistudio.google.com/apikey).
 Without it every call raises a clear 503 so the feature can be built and demoed
@@ -48,7 +49,21 @@ def _post_json(url: str, body: dict, key: str) -> dict:
         return json.loads(resp.read())
 
 
-async def complete(prompt: str, system: str | None = None, json_mode: bool = False) -> str:
+async def complete(
+    prompt: str, system: str | None = None, json_mode: bool = False, fallback: str | None = None
+) -> str:
+    """`fallback`: a canned answer to return instead of raising if the AI is
+    unconfigured, out of quota, or unreachable — so a demo survives a dead API.
+    Callers should show that it's a fallback (e.g. an "offline" badge)."""
+    try:
+        return await _complete(prompt, system, json_mode)
+    except HTTPException:
+        if fallback is not None:
+            return fallback
+        raise
+
+
+async def _complete(prompt: str, system: str | None, json_mode: bool) -> str:
     key = os.getenv("GEMINI_API_KEY")
     if not key:
         raise HTTPException(
@@ -68,7 +83,8 @@ async def complete(prompt: str, system: str | None = None, json_mode: bool = Fal
     except urllib.error.HTTPError as e:
         detail = e.read().decode(errors="replace")[:300]
         raise HTTPException(status_code=502, detail=f"AI request failed ({e.code}): {detail}")
-    except (urllib.error.URLError, TimeoutError) as e:
+    except (urllib.error.URLError, OSError, ValueError) as e:
+        # URLError: unreachable; OSError: dropped connection; ValueError: non-JSON reply
         raise HTTPException(status_code=502, detail=f"AI request failed: {e}")
 
     try:

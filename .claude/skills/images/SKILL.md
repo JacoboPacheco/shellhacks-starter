@@ -1,12 +1,12 @@
 ---
 name: images
-description: Photo pass for finished pages — fill obvious photo spots (hero, empty states, feature cards, about) with Unsplash photos, place the best picks, then ask the user once to confirm or swap. Use as the LAST step of a turn after /check passes, or when the user asks for images/polish. Never while a feature is still being built.
+description: Photo pass for finished pages — fill obvious photo spots (hero, empty states, feature cards, about) with Unsplash photos, place the best picks, then ask the user once to confirm or swap. Use as the LAST step of a turn after /check passes, or when the user asks for images/photos. Never while a feature is still being built, and never in a turn that applied a new design direction.
 ---
 
 Goal: the user stays hands-off, and nothing waits on their answer. User request, if any: $ARGUMENTS
 
 0. **Preflight:** `node scripts/unsplash.mjs status`. If `configured` is false, skip this whole skill without comment (unless the user explicitly asked for images — then tell them in one line to add `UNSPLASH_ACCESS_KEY` to the repo-root `.env`, see `.env.example`).
-1. **When:** once per turn, as the last step, after `/check` passes. Only pages that now work and don't have photos yet. If several pages finished this turn, they share one pass.
+1. **When:** once per turn, as the last step, after `/check` passes. Only pages that now work and don't have photos yet. If several pages finished this turn, they share one pass. Skip the pass entirely if a design direction was applied this turn — photos come in the next one.
 2. **Pick at most 4 spots total** across those pages — the ones where a photo clearly helps. Leave the rest for a later pass.
 3. **Search each spot:** `node scripts/unsplash.mjs search "<short concrete query>" --count 4 --orientation <landscape|portrait|squarish>` matching the slot's shape. On a rate-limit or key error, stop the pass and mention it in one line.
 4. **Look at every thumbnail** with the Read tool and rank by what's actually in the image (fits the spot, works under any text, suits the page colors), not by the description text.

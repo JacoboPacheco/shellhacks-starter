@@ -36,7 +36,11 @@ export async function api(path, { method = 'GET', body, form } = {}) {
   const res = await fetch(`${BASE}${path}`, { method, headers, body: payload })
   const data = await res.json().catch(() => null)
   if (!res.ok) {
-    if (res.status === 401) clearToken()
+    if (res.status === 401) {
+      clearToken()
+      // lets useAuth drop the stale user (e.g. after a redeploy wiped the database)
+      window.dispatchEvent(new Event('auth:expired'))
+    }
     throw new Error(errorMessage(data, res.status))
   }
   return data

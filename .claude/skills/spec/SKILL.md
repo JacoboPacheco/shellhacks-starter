@@ -16,7 +16,7 @@ Do not propose ideas of your own. Your job is to pressure-test theirs and turn i
    - What data exists, where it comes from, and what happens with bad or missing input
    - Which sponsor challenges it realistically qualifies for, and the smallest addition that would qualify it for another (never force a fit)
    - What gets cut first if time runs short
-3. Write `SPEC.md`: problem (2 sentences), demo script (the exact clicks a judge sees), must-have features with an acceptance check for each, nice-to-haves in cut order, explicitly out of scope, sponsor challenges targeted and why, new endpoints and tables, and an end-to-end verification step.
+3. Write `SPEC.md`: problem (2 sentences), demo script (the exact clicks a judge sees), must-have features with an acceptance check for each, nice-to-haves in cut order, explicitly out of scope, sponsor challenges targeted and why, new endpoints and tables, and an end-to-end verification step. Two defaults unless the idea truly needs otherwise: **no login screen** (every login is dead seconds in front of a judge — `seed.py` and a demo account exist if accounts are unavoidable), and **milestone 1 = the walking skeleton**: the ugliest possible version of the exact demo path working end to end, before any second feature or any polish.
 4. Update the Idea, Sponsor challenges, and Scope sections of CLAUDE.md to match. Keep them short — SPEC.md holds the detail.
 5. Commit SPEC.md and CLAUDE.md with the message `Start ShellHacks project` — this is the line in the history between the pre-event template and event work.
 6. Tell the user to run `/clear` and then say "build from SPEC.md", so the build starts with clean context.

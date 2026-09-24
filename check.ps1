@@ -10,7 +10,7 @@ $candidates = @(
 $bash = $candidates | Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1
 
 if (-not $bash) {
-    Write-Host "Git Bash not found. Install Git (setup-gaming-pc.ps1 does this), then rerun." -ForegroundColor Red
+    Write-Host "Git Bash not found. Install Git (setup-machine.ps1 does this), then rerun." -ForegroundColor Red
     exit 1
 }
 

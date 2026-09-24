@@ -1,6 +1,6 @@
 # Deploy path
 
-Do this once, early (Day 1 practice), so kickoff-day deploy is just "repeat these steps."
+Do this once before the event, as practice, so the kickoff-day deploy is just "repeat these steps."
 Order matters: backend first (Vercel needs its URL), then frontend, then close the loop.
 
 After the practice run, delete the practice services (Render: service → Settings → Delete; Vercel: project → Settings → Delete). Otherwise on kickoff day the Blueprint's service name `shellhacks-backend` is already taken and Vercel's project name collides — a confusing 10 minutes you don't need. (Or just rename the service in `render.yaml` to your project's name at kickoff.)
@@ -22,27 +22,26 @@ After the practice run, delete the practice services (Render: service → Settin
 
 ## 3. Close the loop
 
-Render → your service → Environment → set `ALLOWED_ORIGINS` to your Vercel URL (no trailing slash; several origins are comma-separated) → save, it redeploys. Then open the Vercel URL: "Backend status: ok" with no CORS errors in the browser console. If it says "backend unreachable", the origin doesn't match — compare the browser's address bar to `ALLOWED_ORIGINS` character by character (https, no trailing slash, the Domains URL not a deployment URL).
+Render → your service → Environment → set `ALLOWED_ORIGINS` to your Vercel URL (no trailing slash; several origins are comma-separated) → save, it redeploys. Then open the Vercel URL: "Backend status: ok" with no CORS errors in the browser console. If it says "backend unreachable", read the text after the dash: if it names `VITE_API_URL`, set that in Vercel and redeploy; otherwise the origin doesn't match — compare the browser's address bar to `ALLOWED_ORIGINS` character by character (https, no trailing slash, the Domains URL not a deployment URL).
 
-Prove the deployed backend works, not just that it's up:
+Prove the deployed backend works, not just that it's up — including that it accepts requests from the Vercel origin — then create the demo account on it:
 
 ```
-SMOKE_BASE_URL=https://<your-render-url> backend/venv/Scripts/python backend/smoke_test.py
+$env:SMOKE_ORIGIN='https://<your-vercel-url>'; backend\venv\Scripts\python backend\smoke_test.py https://<your-render-url>
+backend\venv\Scripts\python backend\seed.py https://<your-render-url>
 ```
 
-(Git Bash / Claude Code. From PowerShell: `$env:SMOKE_BASE_URL='https://<your-render-url>'; backend\venv\Scripts\python backend\smoke_test.py`.)
+(In Git Bash / Claude Code: `SMOKE_ORIGIN=https://<vercel-url> backend/venv/Scripts/python backend/smoke_test.py https://<render-url>`.)
+
+Then, right away: Render → service → Settings → Build & Deploy → **Auto-Deploy: No**. From here on, pushes are backups and CI only; you redeploy on purpose with "Manual Deploy" a few times a day. Reasons: every Render deploy erases the database and uploads (free tier, no persistent disk), and the free tier has ~500 build minutes a month at ~3 per deploy.
 
 ## 4. Keep the backend awake (2 minutes, do it right after deploying)
 
-Render's free tier spins down after 15 min idle, and the next request waits 30–60s — that would be a judge's first click. The repo includes a GitHub Action that pings the backend every 10 minutes. Turn it on: GitHub → your repo → Settings → Secrets and variables → Actions → **Variables** → New repository variable → name `RENDER_URL`, value your Render URL. Confirm under the Actions tab that "Keep backend warm" runs green. (GitHub may delay scheduled runs by a few minutes; that's fine.) Still open the site yourself a minute before demoing.
+Render's free tier spins down after 15 min idle, and the next request waits 30s or more — that would be a judge's first click. The repo includes a GitHub Action scheduled every 5 minutes (GitHub often delays it, so expect roughly every 10) that pings the backend. Turn it on: GitHub → your repo → Settings → Secrets and variables → Actions → **Variables** → New repository variable → name `RENDER_URL`, value your Render URL. Confirm under the Actions tab that "Keep backend warm" runs green. (GitHub may delay scheduled runs by a few minutes; that's fine.) Still open the site yourself a minute before demoing.
 
 ## Redeploying during the hackathon
 
-Both services redeploy automatically on every `git push` — a few minutes for Render, less for Vercel. Two consequences:
-- **Every Render deploy erases the database and uploads** (free tier, no persistent disk). Any account or demo data you made is gone after a push. This is fine while building; in the last hours it's dangerous — see the "Last 3 hours" section of KICKOFF_CHECKLIST.md (turn Auto-Deploy off, deploy manually, recreate the demo account after the final deploy).
-- Render's free tier has ~500 build minutes per month and each deploy uses ~3. Pushing every 10 minutes for 36 hours would burn through them. Push freely (CI and backup are free), but if you're pushing constantly, turn Auto-Deploy off and deploy manually a few times a day.
-
-Don't push an untested change in the last 15 minutes before a demo.
+With Auto-Deploy off (section 3), a redeploy is: Render → Manual Deploy → latest commit (a few minutes), then `seed.py <render-url>` to recreate the demo data. Vercel still redeploys the frontend on every push, which is harmless (no data there). Don't redeploy in the last 15 minutes before a demo, and demo from localhost when judges are at your table.
 
 ## Important: Render's free tier disk is not persistent
 

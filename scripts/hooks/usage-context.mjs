@@ -7,6 +7,7 @@ import { join } from 'node:path'
 const MAX_AGE_MS = 20 * 60 * 1000
 
 function relative(epochSeconds) {
+  if (!Number.isFinite(epochSeconds)) return 'unknown'
   const ms = epochSeconds * 1000 - Date.now()
   if (ms <= 0) return 'now'
   const h = Math.floor(ms / 3_600_000)

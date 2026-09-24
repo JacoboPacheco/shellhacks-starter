@@ -16,6 +16,9 @@ export default function useAuth() {
 
   useEffect(() => {
     refresh()
+    const expired = () => setUser(null)
+    window.addEventListener('auth:expired', expired)
+    return () => window.removeEventListener('auth:expired', expired)
   }, [refresh])
 
   const login = async (email, password) => {

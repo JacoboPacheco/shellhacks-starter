@@ -21,6 +21,8 @@
       "Bash(npm ci)",
       "Bash(npx oxlint *)",
       "Bash(npx playwright *)",
+      "Bash(python *)",
+      "Bash(playwright *)",
       "Bash(python -m venv venv)",
       "Bash(venv/Scripts/python *)",
       "Bash(venv/Scripts/pip install -r requirements.txt)",
@@ -34,7 +36,9 @@
       "Bash(git diff*)",
       "Bash(git log*)",
       "Bash(git show*)",
-      "Bash(git branch*)",
+      "Bash(git branch)",
+      "Bash(git branch -a*)",
+      "Bash(git branch --show-current)",
       "Bash(git add *)",
       "Bash(git commit *)",
       "Bash(cd *)"
@@ -49,7 +53,10 @@
       "Bash(git restore -- .)",
       "Bash(git clean -f*)",
       "Bash(git clean -d*)",
-      "Bash(git stash drop*)"
+      "Bash(git stash drop*)",
+      "Bash(git stash clear*)",
+      "Bash(git branch -D*)",
+      "Bash(git branch -f*)"
     ]
   },
   "hooks": {

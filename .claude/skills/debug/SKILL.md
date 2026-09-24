@@ -16,4 +16,4 @@ Rules: no code changes until step 3. Guessing costs more time than looking.
 2. **Name the cause in one sentence** before touching code. If the error mentions CORS, the `.env`, a port, or "unreachable", check the Gotchas section of CLAUDE.md first — it's usually one of those.
 3. **Fix the root cause**, not the symptom. Never suppress an error, widen a `try/except`, or loosen validation to make a message go away.
 4. **Prove it:** reproduce the original steps and show they pass. If the bug was in an endpoint, add a check to `backend/smoke_test.py` so `/check` catches it next time.
-5. If the fix is more than a few lines, commit it with a message saying what was broken.
+5. If the fix is more than a few lines, follow the commit rule in CLAUDE.md's Workflow (reviewer first if it touched auth or data), with a message saying what was broken.

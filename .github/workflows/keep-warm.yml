@@ -1,5 +1,5 @@
 # Render's free tier spins the backend down after ~15 min idle and the next
-# request waits ~30s — a judge's first click. This pings it every 10 minutes
+# request waits 30s or more — a judge's first click. This pings it every 10 minutes
 # so it stays awake (every 5 min on paper — GitHub often delays scheduled runs
 # by 5–15 min, so this is what actually keeps it under the 15-min idle cutoff).
 # Enable it by setting a repository variable:

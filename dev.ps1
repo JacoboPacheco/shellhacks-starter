@@ -4,12 +4,11 @@
 
 $root = $PSScriptRoot
 
-if ($env:SSH_CONNECTION -or $env:SSH_CLIENT -or $env:VSCODE_IPC_HOOK_CLI) {
-    Write-Host "You're connected over SSH / VS Code Remote. The windows this script opens would appear on the PC's own screen, not yours." -ForegroundColor Yellow
-    Write-Host "Instead, open two VS Code terminals and run (from CLAUDE.md > Commands):"
+if ($env:SSH_CONNECTION -or $env:SSH_CLIENT) {
+    Write-Host "You're connected over SSH. The windows this script opens would appear on the remote machine's screen, not yours." -ForegroundColor Yellow
+    Write-Host "Instead, open two terminals and run:"
     Write-Host "  cd backend;  .\venv\Scripts\python -m uvicorn main:app --reload --port 8000"
     Write-Host "  cd frontend; npm run dev"
-    Write-Host "Then use the forwarded http://localhost:5173 in your laptop browser (see REMOTE.md)."
     exit 1
 }
 
