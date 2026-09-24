@@ -34,6 +34,7 @@ Explicitly NOT doing:
 - For anything touching more than one file: plan briefly before coding. For a one-line fix, just do it.
 - Don't claim a feature is done without evidence: show the test/curl output, or a screenshot. If it can't be verified, say so instead of asserting it works.
 - If you've corrected the same mistake twice, stop repeating — run `/clear` and restate the task with what you learned, instead of continuing to patch a polluted context.
+- Before calling a nontrivial feature done, use a subagent to review the diff with fresh eyes against what it's supposed to do. Don't use subagents for routine building — they start with no memory of this file or the conversation, so they cost more than they help unless the point is a fresh, unbiased look.
 
 ## Current status
 [Update this as you go — what's working, what's broken, what you're mid-way through.]
