@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Integer, LargeBinary, String
+from sqlalchemy import JSON, Boolean, ForeignKey, Integer, LargeBinary, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from database import Base
@@ -25,13 +25,15 @@ class Upload(Base):
 
 
 class Item(Base):
-    # EXAMPLE table for items.py — copy the shape, then delete or rename it.
-    # Keep columns nullable-friendly and plain (String, not Enum): a column added
-    # mid-event is created automatically on startup, but only as a nullable column.
+    # EXAMPLE table for items.py (template scaffolding — remove with it).
+    # The shape to copy: everything but the key fields is `X | None`, because a
+    # column added mid-event is created on startup as nullable and old rows get
+    # NULL there. Lists go in JSON (works on SQLite and Postgres); no Enum columns.
     __tablename__ = "items"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(120))
-    notes: Mapped[str] = mapped_column(String(2000), default="")
-    tags: Mapped[str] = mapped_column(String(120), default="")  # comma-separated
+    notes: Mapped[str | None] = mapped_column(String(2000), default="")
+    tags: Mapped[list | None] = mapped_column(JSON, default=list)
+    ai_fallback: Mapped[bool | None] = mapped_column(Boolean, default=False)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)

@@ -246,10 +246,19 @@ def test_item_create_and_list():
 
 def test_item_validation():
     request("POST", "/api/items", {"title": ""}, headers=auth_headers["value"], expect=422)
+    request("POST", "/api/items", {"title": "   "}, headers=auth_headers["value"], expect=422)
     request("POST", "/api/items", {"title": "x" * 121}, headers=auth_headers["value"], expect=422)
 
 
-def test_item_delete_and_owner_only():
+def test_item_owner_only():
+    # a second throwaway user must not see or delete the first user's item
+    other = request("POST", "/api/auth/signup", {"email": f"other-{email}", "password": "smoketest123"})
+    other_headers = {"Authorization": f"Bearer {other['access_token']}"}
+    request("DELETE", f"/api/items/{item['id']}", headers=other_headers, expect=404)
+    assert not any(it["id"] == item["id"] for it in request("GET", "/api/items", headers=other_headers)), "leaked"
+
+
+def test_item_delete():
     request("DELETE", f"/api/items/{item['id']}", headers=auth_headers["value"])
     request("DELETE", f"/api/items/{item['id']}", headers=auth_headers["value"], expect=404)
     listed = request("GET", "/api/items", headers=auth_headers["value"])
@@ -258,8 +267,9 @@ def test_item_delete_and_owner_only():
 
 check("items require auth", test_items_require_auth)
 check("item create + list roundtrip", test_item_create_and_list)
-check("item validation rejects empty and oversized titles", test_item_validation)
-check("item delete works and is owner-only", test_item_delete_and_owner_only)
+check("item validation rejects empty, blank, and oversized titles", test_item_validation)
+check("items are owner-only", test_item_owner_only)
+check("item delete works", test_item_delete)
 
 if failures:
     print(f"\n{len(failures)} check(s) failed: {', '.join(failures)}")

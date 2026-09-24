@@ -1,5 +1,7 @@
 # Shellhacks starter
 
+**This is a template, not a project.** It holds plumbing (auth, uploads, deploy, checks, an LLM helper), a small UI kit, and one clearly-labelled example feature that exists to be copied and then deleted. The hackathon project is generated from it at kickoff and built from that point on; the first commit after generation is "Start ShellHacks project".
+
 FastAPI backend (SQLite locally, Postgres on Render — uploads live in the database too, so nothing is lost on deploys) + React (Vite) frontend with a small UI kit and one example feature, wired together and verified working end to end, plus a `.claude/` setup that makes Claude Code faster and more reliable on this repo.
 At kickoff, generate the project's repo from this template, run `/spec` in Claude Code with your idea, and start building features instead of plumbing.
 

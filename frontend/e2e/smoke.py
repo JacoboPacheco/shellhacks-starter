@@ -29,7 +29,7 @@ A11Y_JS = """
   });
   document.querySelectorAll('input, textarea, select').forEach((el) => {
     if (['hidden', 'submit', 'button', 'reset', 'image'].includes(el.type) || !visible(el)) return;
-    const labelled = el.labels?.length || el.getAttribute('aria-label') || el.getAttribute('aria-labelledby') || el.title;
+    const labelled = [...(el.labels || [])].some((l) => l.textContent.trim()) || el.getAttribute('aria-label') || el.getAttribute('aria-labelledby') || el.title;
     if (!labelled) problems.push(`${el.tagName.toLowerCase()} ${el.id ? '#' + el.id : '(no id)'} has no label`);
   });
   return problems;

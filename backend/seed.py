@@ -61,15 +61,29 @@ def get_token() -> str:
     sys.exit(1)
 
 
+SEED_MARK = "(example row from the starter template)"
+EXAMPLE_ROWS = (
+    ("Example item from the template", f"Seeded by seed_project_data in backend/seed.py {SEED_MARK}"),
+    ("Delete me once the real feature exists", f"Tags are suggested by AI when GEMINI_API_KEY is set {SEED_MARK}"),
+)
+
+
 def seed_project_data(token: str) -> None:
-    """Create the rows the demo needs, via the API. Idempotent: check before creating.
-    This seeds the EXAMPLE feature (items.py) — replace it with the project's own rows."""
+    """Create the rows the demo needs, via the API. Idempotent: it lists first, creates
+    only what's missing, and removes its own stale rows (matched by SEED_MARK) when a
+    row here is renamed. This seeds the EXAMPLE feature (items.py) — replace it with
+    the project's own rows, keeping the same shape."""
     status, existing = call("GET", "/api/items", token=token)
-    have = {it["title"] for it in existing} if status == 200 else set()
-    for title, notes in (
-        ("Welcome to the starter", "This row comes from seed_project_data in backend/seed.py."),
-        ("Try adding an item", "Tags are suggested by AI when GEMINI_API_KEY is set."),
-    ):
+    if status != 200:
+        print(f"could not list items ({status} {existing}); not seeding blind")
+        sys.exit(1)
+    wanted = {title for title, _ in EXAMPLE_ROWS}
+    for it in existing:
+        if SEED_MARK in (it.get("notes") or "") and it["title"] not in wanted:
+            call("DELETE", f"/api/items/{it['id']}", token=token)
+            print(f"removed stale seed row {it['title']!r}")
+    have = {it["title"] for it in existing}
+    for title, notes in EXAMPLE_ROWS:
         if title in have:
             continue
         status, payload = call("POST", "/api/items", {"title": title, "notes": notes}, token=token)

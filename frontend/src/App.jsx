@@ -18,7 +18,7 @@ function App() {
   }, [])
 
   return (
-    <Layout title="Shellhacks Starter" tagline="Replace this with your project" user={user}>
+    <Layout title="Starter template" tagline="Example screens only — nothing here is a project yet" user={user}>
       <p className="muted">Backend status: {status}</p>
       {loading ? (
         <Loading />

@@ -4,27 +4,35 @@ import { useId } from 'react'
 // Use these instead of raw <button>/<input> so every screen shares one look and
 // the browser check (labels, alt text) stays green. Retheme by editing the tokens.
 
-export function Button({ variant = 'primary', busy = false, type = 'button', children, ...props }) {
+export function Button({ variant = 'primary', busy = false, disabled = false, type = 'button', children, ...props }) {
   const cls = ['btn', variant !== 'primary' && `btn--${variant}`].filter(Boolean).join(' ')
+  // `busy` always wins over a caller's `disabled`, so a click can't double-submit mid-save.
   return (
-    <button type={type} className={cls} disabled={busy || props.disabled} aria-busy={busy || undefined} {...props}>
+    <button type={type} className={cls} {...props} disabled={busy || disabled} aria-busy={busy || undefined}>
       {children}
     </button>
   )
 }
 
 // Labelled control. `as` is 'input' (default), 'textarea', or 'select' (pass <option>s as children).
+// `label` is required: without one the control has no accessible name.
 export function Field({ label, hint, as = 'input', id, children, ...props }) {
   const autoId = useId()
   const controlId = id || autoId
+  const hintId = hint ? `${controlId}-hint` : undefined
   const Control = as
+  if (import.meta.env.DEV && !label) console.warn('Field rendered without a label — screen readers get nothing')
   return (
     <div className="field">
       <label htmlFor={controlId}>{label}</label>
-      <Control id={controlId} {...props}>
+      <Control id={controlId} aria-describedby={hintId} {...props}>
         {as === 'select' ? children : undefined}
       </Control>
-      {hint && <span className="hint">{hint}</span>}
+      {hint && (
+        <span className="hint" id={hintId}>
+          {hint}
+        </span>
+      )}
     </div>
   )
 }

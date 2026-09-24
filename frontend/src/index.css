@@ -6,7 +6,7 @@
   --surface: #ffffff;
   --text: #1a1a1a;
   --muted: #5f6368;
-  --border: #dcdcd7;
+  --border: #8f8f8a; /* ≥ 3:1 against the surface (WCAG 1.4.11) — keep that when retheming */
   --accent: #2f5bea;
   --accent-text: #ffffff;
   --danger: #c62828;
@@ -32,7 +32,7 @@
     --surface: #1d1d1d;
     --text: #ececec;
     --muted: #a0a0a0;
-    --border: #333333;
+    --border: #6f6f6f;
     --accent: #6d8dff;
     --accent-text: #0b1020;
     --danger: #ff6b6b;
@@ -246,4 +246,15 @@ a {
 
 .list > li:last-child {
   border-bottom: 0;
+}
+
+/* a long unbroken word or URL must wrap, not push the row off-screen */
+.list > li > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.notes {
+  margin: 0;
+  white-space: pre-wrap;
 }

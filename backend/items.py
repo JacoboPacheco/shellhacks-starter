@@ -1,17 +1,21 @@
 """
-EXAMPLE FEATURE — the shape every feature in this app follows. Copy it for the
-walking skeleton, then delete or rename it once the real feature exists:
+EXAMPLE FEATURE — template scaffolding, not project code. It exists so the first
+real feature can copy a working shape:
 
     model in models.py  ->  this router  ->  smoke checks in smoke_test.py
     ->  demo rows in seed.py  ->  the panel in frontend/src/ItemsPanel.jsx
 
 It shows: auth on every route, a per-visitor rate limit on the POST, an AI call
 that falls back instead of failing (and tells the UI it did), owner-only access,
-and input validation with limits.
+and input validation. Remove it before milestone 1 — all of: `Item` in models.py,
+this file, its `include_router` line in main.py, its checks in smoke_test.py, its
+rows in seed_project_data, ItemsPanel.jsx and its use in App.jsx.
 """
 
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, StringConstraints
 from sqlalchemy.orm import Session
 
 from auth import get_current_user
@@ -22,39 +26,43 @@ from models import Item, User
 
 router = APIRouter(tags=["items"])
 
-# The fallback is a distinct object, so `result is NO_TAGS` tells us the AI didn't answer.
 NO_TAGS: dict = {"tags": []}
+
+# strip_whitespace runs before min_length, so "   " is rejected, not saved as "".
+Title = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
+Notes = Annotated[str, StringConstraints(strip_whitespace=True, max_length=2000)]
 
 
 class ItemIn(BaseModel):
-    title: str = Field(min_length=1, max_length=120)
-    notes: str = Field("", max_length=2000)
+    title: Title
+    notes: Notes = ""
 
 
-def serialize(item: Item, fallback: bool = False) -> dict:
+def serialize(item: Item) -> dict:
+    # Columns added mid-event arrive as NULL on old rows — always read them with a default.
     return {
         "id": item.id,
         "title": item.title,
-        "notes": item.notes,
-        "tags": [t for t in item.tags.split(",") if t],
-        "fallback": fallback,
+        "notes": item.notes or "",
+        "tags": list(item.tags or []),
+        "fallback": bool(item.ai_fallback),
     }
 
 
 async def suggest_tags(title: str, notes: str) -> tuple[list[str], bool]:
-    """Up to 3 short tags from the AI; ([], True) when it's unconfigured, out of
-    quota, or unreachable — the item still saves."""
-    result = await complete_json(
+    """Up to 3 short tags from the AI. ([], True) when it's unconfigured, out of
+    quota, unreachable, slow, or answered with the wrong shape — the item still saves."""
+    data, offline = await complete_json(
         f"Suggest up to 3 short lowercase tags for this item.\nTitle: {title}\nNotes: {notes}\n"
         'Answer as {"tags": ["..."]}.',
         fallback=NO_TAGS,
+        timeout=10,  # a demo-path call waits seconds, not the 60 s default
     )
-    if result is NO_TAGS:
+    raw = data.get("tags") if isinstance(data, dict) else None
+    if offline or not isinstance(raw, list):
         return [], True
-    tags = result.get("tags") if isinstance(result, dict) else None
-    if not isinstance(tags, list):
-        return [], True
-    return [str(t).strip().lower()[:24] for t in tags if str(t).strip()][:3], False
+    tags = [str(t).strip().lower()[:24] for t in raw if str(t).strip()]
+    return list(dict.fromkeys(tags))[:3], False  # de-duplicated, capped
 
 
 @router.get("/api/items")
@@ -68,12 +76,17 @@ def list_items(db: Session = Depends(get_db), user: User = Depends(get_current_u
 async def create_item(
     request: Request, body: ItemIn, db: Session = Depends(get_db), user: User = Depends(get_current_user)
 ):
+    user_id = user.id
+    # Release the pooled database connection before the slow AI call. Holding it
+    # would let ~15 waiting requests exhaust the pool and take the whole app down
+    # (including /api/health). Keep this line in every route that awaits the AI.
+    db.rollback()
     tags, fallback = await suggest_tags(body.title, body.notes)
-    item = Item(title=body.title.strip(), notes=body.notes.strip(), tags=",".join(tags), user_id=user.id)
+    item = Item(title=body.title, notes=body.notes, tags=tags, ai_fallback=fallback, user_id=user_id)
     db.add(item)
     db.commit()
     db.refresh(item)
-    return serialize(item, fallback)
+    return serialize(item)
 
 
 @router.delete("/api/items/{item_id}")
