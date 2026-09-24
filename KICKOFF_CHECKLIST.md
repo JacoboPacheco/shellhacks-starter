@@ -8,12 +8,14 @@
 - [ ] Start Claude Code in the repo and **accept the "trust this folder" prompt** — until you do, the permission allowlist and edit hook in `.claude/settings.json` are silently ignored
 - [ ] Run `/hooks` once to confirm the "Checking edited file" PostToolUse hook is listed
 - [ ] Run `/spec <your idea in a sentence>`, answer its questions — it writes SPEC.md and fills in CLAUDE.md
+- [ ] Commit SPEC.md + CLAUDE.md as "Start ShellHacks project" — a clear line between the pre-event template and event work in the history
 - [ ] `/clear`, then tell Claude Code to build from SPEC.md
 
 ## Building
 - [ ] `.\dev.ps1` to run both servers (backend auto-reloads)
 - [ ] Keep CLAUDE.md's "Current status" updated — this is what keeps Claude Code oriented across a long session
 - [ ] Deploy early (see DEPLOY.md), not at hour 30 — a broken deploy found early is a non-event; found late is a crisis
+- [ ] `git push` every few hours — backup if the gaming PC dies, and it keeps the timestamped history safe
 - [ ] Re-check Scope every few hours — cut "nice to have" the moment you're behind
 
 ## Last 3 hours — stop building new features

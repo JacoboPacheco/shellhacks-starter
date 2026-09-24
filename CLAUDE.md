@@ -50,6 +50,7 @@ Run shell commands with the Bash tool (Git Bash), not PowerShell — everything 
 - When planning, point out which sponsor challenges the idea realistically qualifies for and the smallest addition that would qualify it for another — never force a fit.
 - Don't claim a feature is done without evidence: run `/check` and show the result. If something can't be verified, say so.
 - Before calling a nontrivial feature done, have the `reviewer` agent check the diff with fresh eyes. Don't use subagents for routine building — they start with no memory of the conversation.
+- Commit after each feature that works (small commits, message says what now works). The commit history is our evidence the project was built during the event — never batch a whole day into one commit. Remind me to push every few hours.
 - If you've corrected the same mistake twice, stop — `/clear` and restate the task with what you learned.
 - Photos: as the last step of a turn where pages got finished and `/check` passed, run the `images` skill — place your best picks, then ask me once to confirm or swap. Never mid-feature, and never block on my answer.
 
