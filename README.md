@@ -49,7 +49,8 @@ Demo account and demo data (recreate any time, locally or on Render): `backend\v
 
 | | What it does |
 |---|---|
-| `CLAUDE.md` | Standing orders: commands, codebase patterns, how to interpret loose requests, judging lens, gotchas, and the two sections Claude keeps updated (Decisions, Current status) |
+| `CLAUDE.md` | Standing orders: commands, codebase patterns, how to interpret loose requests, gotchas, and the two sections Claude keeps updated (Decisions, Current status) |
+| `PLAYBOOK.md` | What Claude does in each phase of the event — sanity, spec, walking skeleton, build-out, away mode, polish, freeze and ship, recovery |
 | `/spec <idea>` | Interviews you about your idea and writes SPEC.md (never suggests its own ideas) |
 | `/check` | Runs `scripts/check.sh` and reports with evidence |
 | `images` skill | When a page is done, Claude finds its photo spots, looks at Unsplash options, places its best picks with credit, then asks you once to confirm or swap. Also runs on `/images` |
@@ -59,7 +60,7 @@ Demo account and demo data (recreate any time, locally or on Render): `backend\v
 | `reviewer` agent | Fresh-eyes review of a diff before commit — used for auth/data/security changes |
 | Edit hook | After every edit, lint-checks JS/JSX and syntax-checks Python so broken code is caught immediately |
 | Push reminder | When Claude finishes a turn with 2+ unpushed commits, it says so — pushes are your timestamped proof of event-time work and your backup if the machine dies |
-| Permissions | Routine commands (npm scripts, checks, python, git status/diff/commit) run without asking; force-push, hard reset, `checkout .`, `clean` are denied; any other push still asks |
+| Permissions | Routine commands (npm scripts, checks, the project's python scripts, git status/diff/commit/push) and file edits inside the repo run without asking; force-push, hard reset, `checkout .`, `clean` are denied |
 | Plugins | `frontend-design` (visual polish) and `example-skills` (incl. `webapp-testing`) are registered in `.claude/settings.json`, so a fresh machine installs them on first open |
 | Status line | Bottom of the Claude Code window: model, context-usage bar, 5-hour limit, branch with unpushed count |
 | Budget awareness | Every prompt carries the 5-hour and weekly usage; Claude warns once at 85% of the 5-hour or 70% of the weekly limit |

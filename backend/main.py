@@ -1,13 +1,13 @@
 import logging
 import logging.handlers
 import os
+import re
 from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from sqlalchemy import text
 
@@ -26,15 +26,29 @@ for _name in ("uvicorn", "uvicorn.access"):
 import auth
 import llm
 import uploads
-from database import Base, engine
+from database import Base, add_missing_columns, engine
 from limiter import limiter
 
 Base.metadata.create_all(bind=engine)
+add_missing_columns()
 
 app = FastAPI()
 
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+
+def rate_limit_handler(request: Request, exc: RateLimitExceeded):
+    # FastAPI errors carry `detail`, which the frontend shows; slowapi's default body
+    # uses `error`, so a custom message (the AI daily cap's) never reached the UI.
+    # A bare limit string like "30 per 1 minute" becomes a friendly line instead.
+    message = exc.detail
+    if re.match(r"^\d+ per \d+ ", message):
+        message = "Too many requests — wait a minute and try again"
+    response = JSONResponse({"detail": message}, status_code=429)
+    return request.app.state.limiter._inject_headers(response, request.state.view_rate_limit)
+
+
+app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
 
 # Runs before routing and body parsing, so a huge upload is refused without being

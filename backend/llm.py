@@ -8,8 +8,8 @@ LLM helper (Gemini, free tier). Usage from any router:
     text = await complete("List the questions on this whiteboard", image=(png_bytes, "image/png"))
 
 Needs GEMINI_API_KEY in backend/.env (free key: https://aistudio.google.com/apikey).
-Without it every call raises a clear 503 so the feature can be built and demoed
-as "not configured" instead of crashing. Swap providers by rewriting `complete`
+Without it a call raises a clear 503 — or returns its `fallback` if one was given —
+so the feature can be built and demoed as "not configured" instead of crashing. Swap providers by rewriting `complete`
 only — nothing else in the app knows which model is behind it.
 """
 
