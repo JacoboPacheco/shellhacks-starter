@@ -4,6 +4,7 @@
 - [ ] Clone this repo (or copy the folder) into a new project directory
 - [ ] Fill out CLAUDE.md: Idea, Stack (adjust if this idea needs something different), Scope
 - [ ] `cd backend && venv\Scripts\pip install -r requirements.txt`
+- [ ] Copy `backend/.env.example` to `backend/.env`, fill in `JWT_SECRET` (see README.md)
 - [ ] `cd frontend && npm install`
 - [ ] Confirm both run locally (see README.md) before writing a single feature
 

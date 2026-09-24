@@ -10,6 +10,10 @@ Clone this at kickoff, fill out [CLAUDE.md](./CLAUDE.md) with the actual idea, a
 cd backend
 python -m venv venv
 venv\Scripts\pip install -r requirements.txt
+copy .env.example .env
+```
+Then open `.env` and fill in `JWT_SECRET` (generate one with `python -c "import secrets; print(secrets.token_hex(32))"`), then:
+```
 venv\Scripts\python -m uvicorn main:app --port 8000
 ```
 
