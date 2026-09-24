@@ -17,6 +17,7 @@ import asyncio
 import base64
 import http.client
 import json
+import logging
 import os
 import urllib.error
 import urllib.request
@@ -66,13 +67,17 @@ async def complete(
 ) -> str:
     """`fallback`: a canned answer to return instead of raising if the AI is
     unconfigured, out of quota, or unreachable — so a demo survives a dead API.
-    Callers should show that it's a fallback (e.g. an "offline" badge).
+    Route pattern, so the UI can show an "offline" badge when it fired:
+        text = await complete(prompt, fallback=FALLBACK)
+        return {"text": text, "fallback": text == FALLBACK}
+    The swallowed error is logged as a WARNING (see backend/server.log).
     `image`: (bytes, mime_type) to send alongside the prompt, e.g. the `contents`
     from an upload — Gemini reads photos, screenshots, whiteboards, receipts."""
     try:
         return await _complete(prompt, system, json_mode, image)
-    except HTTPException:
+    except HTTPException as e:
         if fallback is not None:
+            logging.getLogger("uvicorn.error").warning("AI fallback used: %s", e.detail)
             return fallback
         raise
 
