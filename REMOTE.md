@@ -14,6 +14,8 @@
 
    Then, in PowerShell in that folder: `powershell -ExecutionPolicy Bypass -File .\setup-gaming-pc.ps1` (it installs git/node/python/Tailscale). Once git is installed, clone the repo into `C:\dev\` — outside OneDrive — and work from that copy.
 2. Sign into Tailscale on the gaming PC with the **same account** as the laptop.
+   - **Stop the gaming PC from ever sleeping:** Settings → System → Power → Screen and sleep → "When plugged in, put my device to sleep after" → **Never**. A sleeping PC drops off Tailscale and nothing can wake it remotely — this is the easiest way to get locked out mid-hackathon. (Turning the screen off is fine.)
+   - Also worth setting: BIOS "Restore on AC power loss" → **Power On**, so a power blip at home doesn't leave it off for the rest of the event.
 3. In an admin PowerShell on the gaming PC, enable OpenSSH Server (commands are printed at the end of the setup script).
 4. Back on the laptop, run `tailscale status` — you should now see both `raccoonlaptop` and the gaming PC's Tailscale hostname listed.
 5. Test the connection: `ssh <your-windows-username>@<gaming-pc-tailscale-hostname>` — if this logs you in, SSH works.
