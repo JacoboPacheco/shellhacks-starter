@@ -1,34 +1,43 @@
 # Deploy path
 
 Do this once, early (Day 1 practice), so kickoff-day deploy is just "repeat these steps."
+Order matters: backend first (Vercel needs its URL), then frontend, then close the loop.
 
-## Backend → Render
+## 1. Backend → Render (about 5 clicks — `render.yaml` does the rest)
 
 1. Push this repo to GitHub.
-2. render.com → New → Web Service → connect the repo.
-3. Root directory: `backend`
-4. Build command: `pip install -r requirements.txt`
-5. Start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-6. Add env vars from `backend/.env.example` (set `ALLOWED_ORIGINS` to your Vercel URL once you have it — step 5 below).
-7. Deploy. Note the URL, e.g. `https://yourapp.onrender.com`.
-8. Confirm: visit `https://yourapp.onrender.com/api/health` — should show `{"status":"ok"}`.
+2. render.com → New → **Blueprint** → connect the repo. Render reads `render.yaml` and shows one service, `shellhacks-backend`.
+3. It asks for `ALLOWED_ORIGINS` — put `http://localhost:5173` for now (you'll change it in step 3 below). `JWT_SECRET` is generated for you.
+4. Apply. Wait for the deploy to go green. Note the URL, e.g. `https://shellhacks-backend.onrender.com`.
+5. Confirm: `https://<your-render-url>/api/health` shows `{"status":"ok"}`.
 
-## Frontend → Vercel
+## 2. Frontend → Vercel
 
 1. vercel.com → New Project → import the same repo.
-2. Root directory: `frontend`
-3. Framework preset: Vite (auto-detected)
-4. Add env var `VITE_API_URL` = your Render backend URL from above (no trailing slash).
-5. Deploy. Note the URL, e.g. `https://yourapp.vercel.app`.
+2. Root directory: `frontend` (Vite is auto-detected; `frontend/vercel.json` handles page routing).
+3. Environment variable `VITE_API_URL` = your Render URL from above, **no trailing slash**.
+4. Deploy. Note the URL, e.g. `https://yourapp.vercel.app`.
 
-## Close the loop
+## 3. Close the loop
 
-Go back to Render, set `ALLOWED_ORIGINS` to your Vercel URL, redeploy the backend. Reload the frontend — "Backend status: ok" should show with no CORS errors.
+Render → your service → Environment → set `ALLOWED_ORIGINS` to your Vercel URL (no trailing slash) → save, it redeploys. Then open the Vercel URL: "Backend status: ok" with no CORS errors in the browser console.
+
+Prove the deployed backend works, not just that it's up:
+
+```
+SMOKE_BASE_URL=https://<your-render-url> backend/venv/Scripts/python backend/smoke_test.py
+```
+
+(Git Bash / Claude Code. From PowerShell: `$env:SMOKE_BASE_URL='https://<your-render-url>'; backend\venv\Scripts\python backend\smoke_test.py`.)
+
+## Redeploying during the hackathon
+
+Both services redeploy automatically on every `git push`. Render's free tier spins down after ~15 min idle and takes ~30s to wake on the first request — open the site a minute before a judge sees it, and mention it if their first click is slow.
 
 ## Important: Render's free tier disk is not persistent
 
-This starter uses SQLite (`backend/app.db`) and saves uploads to local disk (`backend/uploads/`). On Render's free tier, the filesystem resets on every redeploy and on every restart after the service spins down from inactivity — meaning **all signups and all uploaded files can vanish without warning**, possibly mid-demo. For a 36-hour hackathon this is usually fine to accept as-is (judges see a fresh demo anyway), but know it going in. If it becomes a problem: switch to Render's free Postgres for the database, and either accept uploads are ephemeral or move them to an external store (S3-compatible bucket) if the idea depends on files surviving.
+This starter uses SQLite (`backend/app.db`) and saves uploads to local disk (`backend/uploads/`). On Render's free tier, the filesystem resets on every redeploy and on every restart after the service spins down from inactivity — meaning **all signups and all uploaded files can vanish without warning**, possibly mid-demo. For a 36-hour hackathon this is usually fine to accept as-is (judges see a fresh demo anyway), but know it going in. If it becomes a problem: switch to Render's free Postgres for the database (`DATABASE_URL` is already read from the environment), and either accept uploads are ephemeral or move them to an external store (S3-compatible bucket) if the idea depends on files surviving.
 
 ## Why Render + Vercel
 
-Both have free tiers, both deploy straight from a GitHub push (no CLI setup needed mid-hackathon), and this combo is battle-tested for FastAPI + Vite. Render free tier spins down after inactivity and takes ~30s to wake up on the first request after idling — mention this if a judge's first click is slow.
+Both have free tiers, both deploy straight from a GitHub push (no CLI setup needed mid-hackathon), and this combo is battle-tested for FastAPI + Vite.

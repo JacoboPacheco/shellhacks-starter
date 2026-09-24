@@ -5,14 +5,14 @@ import { api, clearToken, getToken, login as apiLogin, signup as apiSignup } fro
 export default function useAuth() {
   const [user, setUser] = useState(getToken() ? undefined : null)
 
-  const refresh = useCallback(async () => {
-    if (!getToken()) return setUser(null)
-    try {
-      setUser(await api('/api/auth/me'))
-    } catch {
-      setUser(null)
-    }
-  }, [])
+  // Always resolves; never updates state synchronously (keeps the effect below lint-clean).
+  const refresh = useCallback(
+    () =>
+      (getToken() ? api('/api/auth/me') : Promise.resolve(null))
+        .then((u) => setUser(u))
+        .catch(() => setUser(null)),
+    []
+  )
 
   useEffect(() => {
     refresh()
