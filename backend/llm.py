@@ -5,6 +5,7 @@ LLM helper (Gemini, free tier). Usage from any router:
     text = await complete("Summarize this: ...", system="You are terse.")
     data = await complete(prompt, json_mode=True)   # returns a JSON string
     text = await complete(prompt, fallback="(AI offline) Here's an example answer…")  # never raises
+    text = await complete("List the questions on this whiteboard", image=(png_bytes, "image/png"))
 
 Needs GEMINI_API_KEY in backend/.env (free key: https://aistudio.google.com/apikey).
 Without it every call raises a clear 503 so the feature can be built and demoed
@@ -13,6 +14,7 @@ only — nothing else in the app knows which model is behind it.
 """
 
 import asyncio
+import base64
 import json
 import os
 import urllib.error
@@ -50,20 +52,26 @@ def _post_json(url: str, body: dict, key: str) -> dict:
 
 
 async def complete(
-    prompt: str, system: str | None = None, json_mode: bool = False, fallback: str | None = None
+    prompt: str,
+    system: str | None = None,
+    json_mode: bool = False,
+    fallback: str | None = None,
+    image: tuple[bytes, str] | None = None,
 ) -> str:
     """`fallback`: a canned answer to return instead of raising if the AI is
     unconfigured, out of quota, or unreachable — so a demo survives a dead API.
-    Callers should show that it's a fallback (e.g. an "offline" badge)."""
+    Callers should show that it's a fallback (e.g. an "offline" badge).
+    `image`: (bytes, mime_type) to send alongside the prompt, e.g. the `contents`
+    from an upload — Gemini reads photos, screenshots, whiteboards, receipts."""
     try:
-        return await _complete(prompt, system, json_mode)
+        return await _complete(prompt, system, json_mode, image)
     except HTTPException:
         if fallback is not None:
             return fallback
         raise
 
 
-async def _complete(prompt: str, system: str | None, json_mode: bool) -> str:
+async def _complete(prompt: str, system: str | None, json_mode: bool, image: tuple[bytes, str] | None) -> str:
     key = os.getenv("GEMINI_API_KEY")
     if not key:
         raise HTTPException(
@@ -71,7 +79,12 @@ async def _complete(prompt: str, system: str | None, json_mode: bool) -> str:
             detail="AI is not configured: add GEMINI_API_KEY to backend/.env (free key at aistudio.google.com/apikey)",
         )
 
-    body: dict = {"contents": [{"parts": [{"text": prompt}]}]}
+    parts: list[dict] = []
+    if image is not None:
+        data, mime_type = image
+        parts.append({"inline_data": {"mime_type": mime_type, "data": base64.b64encode(data).decode()}})
+    parts.append({"text": prompt})
+    body: dict = {"contents": [{"parts": parts}]}
     if system:
         body["systemInstruction"] = {"parts": [{"text": system}]}
     if json_mode:

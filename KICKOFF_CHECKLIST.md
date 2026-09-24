@@ -8,6 +8,7 @@
 - [ ] On github.com → the repo → Settings → tick **Template repository**
 - [ ] Dry-run the kickoff command so it's not new on the day: in `C:\dev`, `gh repo create kickoff-test --public --clone --template <your-github-user>/shellhacks-starter`, confirm `backend\.env` and `app.db` are NOT in it, then delete the test repo (`gh repo delete kickoff-test --yes`) and the folder
 - [ ] Free API keys, saved where you can paste from: Gemini (aistudio.google.com/apikey — `llm.py` is wired for it; the default model is a Flash-Lite because that's the one with a usable free quota, confirm at aistudio.google.com/rate-limit), Unsplash (photos). A sponsor track you care about with an API → that key too
+- [ ] `pip install playwright` then `playwright install chromium` (once, ~300MB) — Claude's `webapp-testing` skill drives a real browser with it, and `/pitch` uses it for screenshots
 - [ ] 15 minutes: learn to open the browser console (F12 → Console and Network tabs) and paste the red text to Claude. This is the one skill that unblocks a stuck AI on a frontend bug.
 - [ ] 60-minute timed mini-build from the template: `/spec` a throwaway idea, build one feature end to end (table → endpoint → page), `/check`, commit. This tests your loop, not the code. Write down where you got stuck.
 - [ ] Practice deploy per DEPLOY.md, timeboxed to 45 minutes. If Render/Vercel fight you, stop and do it at hour 4 of the event instead. Delete the practice services afterwards (DEPLOY.md top note).
