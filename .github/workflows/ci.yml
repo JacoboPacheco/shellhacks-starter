@@ -30,4 +30,10 @@ jobs:
         with:
           python-version: "3.13"
       - run: pip install -r requirements.txt
-      - run: python -c "import os; os.environ['JWT_SECRET']='ci-test-secret'; import main"
+      - name: Start server and run smoke test
+        env:
+          JWT_SECRET: ci-test-secret
+        run: |
+          python -m uvicorn main:app --port 8000 &
+          for i in $(seq 1 10); do curl -sf http://localhost:8000/api/health && break || sleep 1; done
+          python smoke_test.py
