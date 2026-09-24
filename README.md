@@ -21,6 +21,8 @@ Then open `backend\.env` and set `JWT_SECRET` (generate one with `python -c "imp
 
 Optional, for photos: copy `.env.example` (repo root) to `.env` and add a free Unsplash access key.
 
+Optional, for features that need a "who" without a login screen (saves, likes, history): copy `frontend\.env.example` to `frontend\.env` and uncomment `VITE_DEMO_EMAIL`/`VITE_DEMO_PASSWORD` — the app then signs in as the seeded demo account on load.
+
 New machine with nothing installed? `powershell -ExecutionPolicy Bypass -File .\setup-machine.ps1` installs git, GitHub CLI, Node, Python, and prints the rest.
 
 ## Run it
