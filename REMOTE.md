@@ -1,7 +1,7 @@
 # Remote path (item 4)
 
 ## Current state (verified during practice)
-- Laptop: Tailscale installed, signed in, connected. Tailscale hostname `raccoonlaptop`, Tailscale IP `100.104.202.72`.
+- Laptop: Tailscale installed, signed in, connected (run `tailscale status` to see its name and IP).
 - Gaming PC: not set up yet — step 1 below.
 - VS Code: Remote-SSH extension installed on the laptop.
 - Parsec: installed on the laptop (as a fallback if SSH/Remote-SSH has issues).
@@ -17,7 +17,7 @@
    - **Stop the gaming PC from ever sleeping:** Settings → System → Power → Screen and sleep → "When plugged in, put my device to sleep after" → **Never**. A sleeping PC drops off Tailscale and nothing can wake it remotely — this is the easiest way to get locked out mid-hackathon. (Turning the screen off is fine.)
    - Also worth setting: BIOS "Restore on AC power loss" → **Power On**, so a power blip at home doesn't leave it off for the rest of the event.
 3. In an admin PowerShell on the gaming PC, enable OpenSSH Server (commands are printed at the end of the setup script).
-4. Back on the laptop, run `tailscale status` — you should now see both `raccoonlaptop` and the gaming PC's Tailscale hostname listed.
+4. Back on the laptop, run `tailscale status` — you should now see both the laptop and the gaming PC listed.
 5. Test the connection: `ssh <your-windows-username>@<gaming-pc-tailscale-hostname>` — if this logs you in, SSH works.
 6. In VS Code on the laptop: Command Palette → "Remote-SSH: Connect to Host..." → enter `<username>@<gaming-pc-tailscale-hostname>`.
 7. **The real test, off your home network**: tether the laptop to your phone hotspot (not home wifi) and repeat steps 4-6. This is the actual practice — confirming it works from an arbitrary network, since that's the condition at the venue.
