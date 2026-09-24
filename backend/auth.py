@@ -1,11 +1,12 @@
 import os
+import re
 from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.orm import Session
 
 from database import get_db
@@ -27,9 +28,25 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
+def normalize_email(value: str) -> str:
+    return value.strip().lower()
+
+
+EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+
 class SignupRequest(BaseModel):
-    email: str
-    password: str
+    email: str = Field(max_length=254)
+    # bcrypt only uses the first 72 bytes of a password
+    password: str = Field(min_length=8, max_length=72)
+
+    @field_validator("email")
+    @classmethod
+    def _valid_email(cls, value: str) -> str:
+        value = normalize_email(value)
+        if not EMAIL_RE.match(value):
+            raise ValueError("enter a valid email address")
+        return value
 
 
 class TokenResponse(BaseModel):
@@ -78,7 +95,7 @@ def signup(request: Request, body: SignupRequest, db: Session = Depends(get_db))
 @router.post("/login", response_model=TokenResponse)
 @limiter.limit("10/minute")
 def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == form_data.username).first()
+    user = db.query(User).filter(User.email == normalize_email(form_data.username)).first()
     if not user or not pwd_context.verify(form_data.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Incorrect email or password")
 

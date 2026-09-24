@@ -28,16 +28,30 @@ export async function api(path, { method = 'GET', body, form } = {}) {
   const data = await res.json().catch(() => null)
   if (!res.ok) {
     if (res.status === 401) clearToken()
-    throw new Error(data?.detail || `Request failed (${res.status})`)
+    throw new Error(errorMessage(data, res.status))
   }
   return data
+}
+
+// FastAPI sends `detail` as a string for HTTPException, but as a list of
+// {loc, msg} objects for validation errors (422).
+function errorMessage(data, status) {
+  const detail = data?.detail
+  if (typeof detail === 'string') return detail
+  if (Array.isArray(detail) && detail.length) {
+    return detail
+      .map((d) => `${d.loc?.at(-1) ?? 'input'}: ${String(d.msg).replace(/^Value error, /, '')}`)
+      .join('; ')
+  }
+  if (status === 429) return 'Too many requests — wait a minute and try again'
+  return `Request failed (${status})`
 }
 
 export async function login(email, password) {
   const form = new URLSearchParams({ username: email, password })
   const res = await fetch(`${BASE}/api/auth/login`, { method: 'POST', body: form })
   const data = await res.json().catch(() => null)
-  if (!res.ok) throw new Error(data?.detail || 'Login failed')
+  if (!res.ok) throw new Error(errorMessage(data, res.status))
   setToken(data.access_token)
   return data
 }

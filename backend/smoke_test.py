@@ -13,6 +13,7 @@ import json
 import os
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 import uuid
 
@@ -105,6 +106,21 @@ def test_signup_duplicate_rejected():
     request("POST", "/api/auth/signup", {"email": email, "password": "smoketest123"}, expect=400)
 
 
+def test_signup_rejects_short_password():
+    request("POST", "/api/auth/signup", {"email": f"x{email}", "password": "short"}, expect=422)
+
+
+def test_signup_rejects_bad_email():
+    request("POST", "/api/auth/signup", {"email": "not-an-email", "password": "longenough123"}, expect=422)
+
+
+def test_login_email_case_insensitive():
+    body = urllib.parse.urlencode({"username": f"  {email.upper()} ", "password": "smoketest123"}).encode()
+    req = urllib.request.Request(BASE + "/api/auth/login", data=body, method="POST")
+    with urllib.request.urlopen(req) as resp:
+        assert "access_token" in json.loads(resp.read())
+
+
 def test_upload_valid_image():
     payload = upload("test.png", "image/png", TINY_PNG)
     assert payload["filename"].endswith(".png")
@@ -119,6 +135,9 @@ check("signup returns token", test_signup)
 check("authenticated /me returns correct user", test_me_authenticated)
 check("unauthenticated /me is rejected", test_me_unauthenticated)
 check("duplicate signup is rejected", test_signup_duplicate_rejected)
+check("short password is rejected", test_signup_rejects_short_password)
+check("malformed email is rejected", test_signup_rejects_bad_email)
+check("login ignores email case/whitespace", test_login_email_case_insensitive)
 check("valid image upload accepted", test_upload_valid_image)
 check("non-image upload rejected", test_upload_wrong_type_rejected)
 

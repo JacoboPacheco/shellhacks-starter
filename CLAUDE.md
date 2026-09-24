@@ -33,6 +33,7 @@ Run shell commands with the Bash tool (Git Bash), not PowerShell — everything 
 
 ## How this codebase is wired — follow these patterns
 - All frontend→backend calls go through `frontend/src/api.js` (`api`, `login`, `signup`, `uploadFile`, `assetUrl`). Don't call `fetch` directly.
+- If the idea needs accounts: `const { user, loading, login, signup, logout } = useAuth()` from `frontend/src/useAuth.js`, and render `<AuthForm login={login} signup={signup} />` when `user` is null. Already tested end to end — reuse it, don't rebuild auth UI.
 - New backend feature = new router module shaped like `backend/uploads.py`, then `app.include_router(...)` in `main.py`. Protect routes with `Depends(get_current_user)` from `auth.py`. Rate-limit public POSTs with `@limiter.limit("N/minute")` (the handler needs a `request: Request` param).
 - Tables go in `backend/models.py` and are created on startup.
 - Every new endpoint gets a check in `backend/smoke_test.py`, so `/check` keeps covering the whole app.
