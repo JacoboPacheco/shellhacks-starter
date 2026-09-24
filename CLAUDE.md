@@ -23,6 +23,9 @@ Nice to have (cut first if time runs out):
 Explicitly NOT doing:
 - [ ]
 
+## Phases
+PLAYBOOK.md is the stage-by-stage plan for the whole event. Read it at the start of every session and whenever the phase changes; say which phase we're in (from the Timeline, `date`, and Current status) before doing anything else.
+
 ## Commands
 Run shell commands with the Bash tool (Git Bash), not PowerShell — everything here is bash syntax and the permission allowlist is written for Bash.
 - Verify everything: `bash scripts/check.sh` (or `/check`) — lint, build, live backend smoke test, then a headless-browser check of the built app (renders, no crash, no console errors, every image has alt / every input has a label, fits a 375px phone). It saves `.claude/tmp/e2e.png` — look at it with the Read tool after a `/check`. Self-contained (own servers on :8765 and :4173), so this is how you test; you don't need the dev servers running.
