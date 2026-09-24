@@ -25,6 +25,10 @@ Do this once, early (Day 1 practice), so kickoff-day deploy is just "repeat thes
 
 Go back to Render, set `ALLOWED_ORIGINS` to your Vercel URL, redeploy the backend. Reload the frontend — "Backend status: ok" should show with no CORS errors.
 
+## Important: Render's free tier disk is not persistent
+
+This starter uses SQLite (`backend/app.db`) and saves uploads to local disk (`backend/uploads/`). On Render's free tier, the filesystem resets on every redeploy and on every restart after the service spins down from inactivity — meaning **all signups and all uploaded files can vanish without warning**, possibly mid-demo. For a 36-hour hackathon this is usually fine to accept as-is (judges see a fresh demo anyway), but know it going in. If it becomes a problem: switch to Render's free Postgres for the database, and either accept uploads are ephemeral or move them to an external store (S3-compatible bucket) if the idea depends on files surviving.
+
 ## Why Render + Vercel
 
 Both have free tiers, both deploy straight from a GitHub push (no CLI setup needed mid-hackathon), and this combo is battle-tested for FastAPI + Vite. Render free tier spins down after inactivity and takes ~30s to wake up on the first request after idling — mention this if a judge's first click is slow.

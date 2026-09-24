@@ -1,11 +1,14 @@
 # Kickoff day runbook
 
 ## First 15 minutes
-- [ ] Clone this repo (or copy the folder) into a new project directory
+- [ ] Clone this repo fresh from GitHub (don't copy the folder — a copy drags along your real `.env` secret and test data from tonight's practice run)
 - [ ] Fill out CLAUDE.md: Idea, Stack (adjust if this idea needs something different), Scope
-- [ ] `cd backend && venv\Scripts\pip install -r requirements.txt`
+- [ ] `cd backend`
+- [ ] `python -m venv venv`
+- [ ] `venv\Scripts\pip install -r requirements.txt`
 - [ ] Copy `backend/.env.example` to `backend/.env`, fill in `JWT_SECRET` (see README.md)
-- [ ] `cd frontend && npm install`
+- [ ] `cd ..\frontend`
+- [ ] `npm install`
 - [ ] Confirm both run locally (see README.md) before writing a single feature
 
 ## Building
