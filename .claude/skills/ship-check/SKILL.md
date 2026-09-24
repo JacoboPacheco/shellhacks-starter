@@ -11,7 +11,7 @@ Go through each item, actually run the command where there is one, and report a 
 3. The deployed frontend actually works in a browser: `python frontend/e2e/smoke.py <vercel-url>` — renders, no crash, no console errors, alt text/labels, fits a phone — then look at `.claude/tmp/e2e.png`, which is now the live site. If Playwright isn't installed, open the Vercel URL in the browser tool instead.
 4. `git status` is clean and the latest commit is pushed (`git status -sb` shows no "ahead").
 5. README.md describes the actual project (what it is, how to run it) — not the starter template text.
-6. Rules disclosure: README.md (and the Devpost writeup) states that auth/upload/deploy/CI scaffolding and the LLM helper (`llm.py`) came from a starter template the user built before the event, and names what was built during the hackathon. ShellHacks rules require documenting pre-existing and external code. If missing, draft the sentence and add it.
+6. Rules disclosure: README.md (and the Devpost writeup in PITCH.md) contain the disclosure line the `pitch` skill defines — which starter pieces predate the event and what was built during it. ShellHacks rules require documenting pre-existing and external code. If missing, draft it in that shape and add it.
 7. CREDITS.md lists every third-party asset (Unsplash photos, etc.), and each photo shows its credit in the UI.
 8. No secrets in the repo. Both of these must print nothing:
    - `git ls-files | grep -E '(^|/)\.env(\..+)?$' | grep -v '\.example$'` (a real .env or .env.local/.env.production file is tracked)

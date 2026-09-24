@@ -43,7 +43,7 @@
 ## Last 3 hours — stop building new features
 - [ ] Freeze features, fix only what's broken
 - [ ] Judging is table-to-table: **demo from your laptop's localhost** (`.\dev.ps1`, `seed.py` for fresh demo data). The deployed URL is for Devpost and for judges who click later.
-- [ ] Final push → Render + Vercel redeploy on their own; run `backend\venv\Scripts\python backend\smoke_test.py <render-url>` once it's green. Demo data persists in Postgres; write the demo login on paper anyway.
+- [ ] Final push → Render + Vercel redeploy on their own; run `backend\venv\Scripts\python backend\smoke_test.py <render-url> <vercel-url>` once Render shows green. Demo data persists in Postgres; write the demo login on paper anyway.
 - [ ] `/pitch` — 30-second and 2-minute versions, Devpost writeup, screenshots, project README. Read the 2-minute one out loud with a timer; memorize the 30-second one.
 - [ ] `/ship-check` — every readiness check, including the rules disclosure line and a secrets scan
 - [ ] Full run-through of the demo path on both localhost and the deployed URL
