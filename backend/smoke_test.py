@@ -12,6 +12,7 @@ Usage:
 import base64
 import json
 import os
+import re
 import sys
 import urllib.error
 import urllib.parse
@@ -24,7 +25,8 @@ TINY_PNG = base64.b64decode(
 )
 
 BASE = (sys.argv[1] if len(sys.argv) > 1 else os.getenv("SMOKE_BASE_URL", "http://localhost:8000")).rstrip("/")
-# Set to the deployed frontend's origin (e.g. https://yourapp.vercel.app) to also verify CORS.
+# Set to the deployed frontend's origin (e.g. https://yourapp.vercel.app) to also verify CORS
+# and that the deployed frontend was built with THIS backend's URL baked in.
 ORIGIN = os.getenv("SMOKE_ORIGIN")
 TIMEOUT = 30
 failures = []
@@ -107,6 +109,24 @@ def test_cors_for_frontend_origin():
     assert allowed == ORIGIN, f"CORS: expected Access-Control-Allow-Origin {ORIGIN}, got {allowed!r} — fix ALLOWED_ORIGINS on the backend"
 
 
+def fetch_text(url):
+    with urllib.request.urlopen(urllib.request.Request(url), timeout=TIMEOUT) as resp:
+        return resp.read().decode(errors="replace")
+
+
+def test_frontend_points_at_this_backend():
+    if not ORIGIN:
+        return
+    # the built bundle must contain this backend's URL, i.e. VITE_API_URL was set at build time
+    html = fetch_text(ORIGIN + "/")
+    scripts = re.findall(r'<script[^>]+src="([^"]+\.js)"', html)
+    assert scripts, f"no <script> tags found at {ORIGIN} — is that the frontend?"
+    bundle = "".join(fetch_text(urllib.parse.urljoin(ORIGIN + "/", s)) for s in scripts)
+    if "VITE_API_URL is not set" in bundle and BASE not in bundle:
+        raise AssertionError(f"the frontend at {ORIGIN} was built WITHOUT VITE_API_URL — set it in Vercel to {BASE} and redeploy")
+    assert BASE in bundle, f"the frontend at {ORIGIN} was built for a different backend (expected {BASE} in its bundle)"
+
+
 def test_signup():
     payload = request("POST", "/api/auth/signup", {"email": email, "password": "smoketest123"})
     assert "access_token" in payload
@@ -156,6 +176,7 @@ def test_upload_wrong_type_rejected():
 
 check("health check", test_health)
 check("CORS allows the frontend origin (when SMOKE_ORIGIN is set)", test_cors_for_frontend_origin)
+check("deployed frontend was built for this backend (when SMOKE_ORIGIN is set)", test_frontend_points_at_this_backend)
 check("signup returns token", test_signup)
 check("authenticated /me returns correct user", test_me_authenticated)
 check("unauthenticated /me is rejected", test_me_unauthenticated)

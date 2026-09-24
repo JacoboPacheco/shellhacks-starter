@@ -12,6 +12,7 @@
 - [ ] 15 minutes: learn to open the browser console (F12 → Console and Network tabs) and paste the red text to Claude. This is the one skill that unblocks a stuck AI on a frontend bug.
 - [ ] 60-minute timed mini-build from the template: `/spec` a throwaway idea, build one feature end to end (table → endpoint → page), `/check`, commit. This tests your loop, not the code. Write down where you got stuck.
 - [ ] Practice deploy per DEPLOY.md, timeboxed to 45 minutes. If Render/Vercel fight you, stop and do it at hour 4 of the event instead. Delete the practice services afterwards (DEPLOY.md top note).
+- [ ] Laptop settings for a 36-hour build: Settings → System → Power → "When plugged in, put my device to sleep after" → **Never** (a sleeping laptop kills the Claude session mid-turn). Windows Security → Virus & threat protection → Exclusions → add `C:\dev` (otherwise Defender re-scans `node_modules` on every change and eats the disk — you hit this on `Projects` already).
 - [ ] Sleep 6+ hours. Pack: laptop, charger, power strip, phone + charger, battery bank, headphones.
 
 ## First 15 minutes

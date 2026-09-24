@@ -24,7 +24,7 @@ After the practice run, delete the practice services (Render: service → Settin
 
 Render → your service → Environment → set `ALLOWED_ORIGINS` to your Vercel URL (no trailing slash; several origins are comma-separated) → save, it redeploys. Then open the Vercel URL: "Backend status: ok" with no CORS errors in the browser console. If it says "backend unreachable", read the text after the dash: if it names `VITE_API_URL`, set that in Vercel and redeploy; otherwise the origin doesn't match — compare the browser's address bar to `ALLOWED_ORIGINS` character by character (https, no trailing slash, the Domains URL not a deployment URL).
 
-Prove the deployed backend works, not just that it's up — including that it accepts requests from the Vercel origin — then create the demo account on it:
+Prove the deployed pair works, not just that it's up — the backend answers, it accepts requests from the Vercel origin, and the Vercel build actually points at this backend — then create the demo account on it:
 
 ```
 $env:SMOKE_ORIGIN='https://<your-vercel-url>'; backend\venv\Scripts\python backend\smoke_test.py https://<your-render-url>
