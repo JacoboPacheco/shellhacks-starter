@@ -21,7 +21,7 @@ Then open `backend\.env` and set `JWT_SECRET` (generate one with `python -c "imp
 
 Optional, for photos: copy `.env.example` (repo root) to `.env` and add a free Unsplash access key.
 
-Optional, for features that need a "who" without a login screen (saves, likes, history): copy `frontend\.env.example` to `frontend\.env` and uncomment `VITE_DEMO_EMAIL`/`VITE_DEMO_PASSWORD` — the app then signs in as the seeded demo account on load.
+Optional, for features that need a "who" without a login screen (saves, likes, history): copy `frontend\.env.example` to `frontend\.env` and uncomment `VITE_DEMO_EMAIL`/`VITE_DEMO_PASSWORD` — `useAuth()` (called from `App.jsx`) then signs in as the seeded demo account on load.
 
 New machine with nothing installed? `powershell -ExecutionPolicy Bypass -File .\setup-machine.ps1` installs git, GitHub CLI, Node, Python, and prints the rest.
 
@@ -43,9 +43,9 @@ Demo account and demo data (recreate any time, locally or on Render): `backend\v
 .\check.ps1
 ```
 
-(From Git Bash or inside Claude Code: `bash scripts/check.sh` — same thing.) Lints and builds the frontend, starts a throwaway backend, runs the smoke test (health, signup, auth, validation, uploads, AI status/auth), then opens the built app in headless Chromium and checks it rendered, didn't crash, logged no errors, has alt text and labels everywhere, and fits a phone screen (needs `pip install playwright` + `playwright install chromium`; skipped otherwise). Prints `ALL CHECKS PASSED` or names what failed, and saves a screenshot to `.claude/tmp/e2e.png`. CI runs the same script on every push.
+(From Git Bash or inside Claude Code: `bash scripts/check.sh` — same thing.) Lints and builds the frontend, starts a throwaway backend, runs the smoke test (health, signup, auth, validation, uploads, AI status/auth), then opens the built app in headless Chromium and checks it rendered, didn't crash, logged no errors, has alt text and labels everywhere, and fits a phone screen (needs `python -m pip install playwright` + `python -m playwright install chromium`; skipped otherwise). Prints `ALL CHECKS PASSED` or names what failed, and saves a screenshot to `.claude/tmp/e2e.png`. CI runs the same script on every push.
 
-## What's in `.claude/` (Claude Code picks this up automatically)
+## The Claude Code setup (CLAUDE.md, PLAYBOOK.md, `.claude/`, `scripts/` — picked up automatically)
 
 | | What it does |
 |---|---|
@@ -63,7 +63,7 @@ Demo account and demo data (recreate any time, locally or on Render): `backend\v
 | Permissions | Routine commands (npm scripts, checks, the project's python scripts, git status/diff/commit/push) and file edits inside the repo run without asking; force-push, hard reset, `checkout .`, `clean` are denied |
 | Plugins | `frontend-design` (visual polish) and `example-skills` (incl. `webapp-testing`) are registered in `.claude/settings.json`, so a fresh machine installs them on first open |
 | Status line | Bottom of the Claude Code window: model, context-usage bar, 5-hour limit, branch with unpushed count |
-| Budget awareness | Every prompt carries the 5-hour and weekly usage; Claude warns once at 85% of the 5-hour or 70% of the weekly limit |
+| Time and budget awareness | Every prompt carries the current time (the playbook's phase rules are clock-based) and, when the status line refreshed in the last 20 minutes, the 5-hour and weekly usage; Claude warns when 85% of the 5-hour or 70% of the weekly limit is first crossed |
 
 Also in the backend: `llm.py` — a ready LLM helper (`await complete(prompt, fallback=...)`, Gemini free tier) with an example authenticated route. Without a key it returns a clear 503, so AI features can be built before the key exists.
 

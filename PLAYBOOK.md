@@ -1,12 +1,12 @@
 # Playbook — what shcht does at each phase of the event
 
-For the Claude Code session building this project. CLAUDE.md holds the rules for every turn; this file holds what changes by phase. Times are relative to kickoff (K) and hacking end (E), from CLAUDE.md → Timeline.
+For the Claude Code session building this project. CLAUDE.md holds the rules for every turn; this file holds what changes by phase. Times are relative to kickoff (K) and hacking end (E), from CLAUDE.md → Timeline; the current time is the `Now:` line on every prompt, or `date`.
 
 ## Knowing where we are (first thing, every session)
 
 1. `date`. Read CLAUDE.md → Timeline and Current status (`PHASE`, `deployed`, and any `DO FIRST` / `BLOCKED` / `WAITING ON YOU` lines).
-2. Timeline still has placeholders: ask K and E in one AskUserQuestion (K = the kickoff time the human gives, else now; ShellHacks 2026 hacks Sept 25–27 — offer the likely end times); write both lines before anything else.
-3. Say it in one line: "Phase 3 — hour 14 of 36, milestone 1 done, 2 of 4 must-haves ticked, deployed: yes" — then repeat any `DO FIRST` / `WAITING ON YOU` lines verbatim. Drop a `DO FIRST` line once the human says it's done.
+2. Timeline still has placeholders: ask K and E in one AskUserQuestion (K = the kickoff time the human gives, else now; the 2026 Hacker Guide says hacking ends Sunday Sept 27 at 11:00 am ET — offer that as the default E); write both lines before anything else.
+3. Say it in one line: "Phase 3 — hour 14 of 36, milestone 1 done, 2 of 4 must-haves ticked, deployed: yes" — then repeat any `DO FIRST` / `WAITING ON YOU` / `BLOCKED` lines verbatim. Drop a `DO FIRST` line once the human says it's done.
 4. When a phase's exit condition is met, write the new `PHASE:` line into Current status and announce it. A phase is only real once it's written.
 
 ## Phase 0 — Sanity (K+0:00 → K+0:15)
@@ -14,7 +14,7 @@ For the Claude Code session building this project. CLAUDE.md holds the rules for
 Entry: SPEC.md does not exist.
 - Confirm setup: `backend/venv`, `backend/.env` with `JWT_SECRET` (and `GEMINI_API_KEY` if the idea uses AI), `frontend/node_modules`. Missing pieces: `python -m venv backend/venv`, `backend/venv/Scripts/pip install -r backend/requirements.txt`, `npm install --prefix frontend`; the human creates `.env` and pastes keys.
 - `/check` must end `ALL CHECKS PASSED` with no `SKIPPED` browser section. If SKIPPED: `python -m pip install playwright && python -m playwright install chromium`; if the download fails on venue wifi, ask the human to switch to the phone hotspot and retry now — Phase 0 doesn't exit with SKIPPED.
-- Ask the human for the sponsor challenge list and paste it into CLAUDE.md → "Sponsor / company challenges to target".
+- CLAUDE.md → "Sponsor / company challenges to target" still a placeholder: ask the human for the list and paste it in.
 Exit: check green, sponsors written. Say: switch `/model` to the bigger model and type `/spec <idea>`.
 
 ## Phase 1 — Spec (K+0:15 → K+0:35)
@@ -25,14 +25,14 @@ The `/spec` skill, typed by the human; everything it does is in the skill. Exit:
 
 Entry: `PHASE: 2`.
 - The walking skeleton is the ugliest possible version of the exact demo path working end to end: tables → endpoints → smoke checks → `api.js` calls → the screens a judge sees. Nothing else — no styling, no nice-to-haves. AI on the path: CLAUDE.md → How this codebase is wired.
-- As soon as the path works once, write `frontend/e2e/demo_path.py`: same shape as `frontend/e2e/smoke.py`, URL as `sys.argv[1]`, exits non-zero on any failed step; it replays SPEC.md's demo script and asserts what a judge sees at each step. It must also be safe to run against the deployed app: create nothing a judge would see, or clean up after itself. `/check` runs it from then on against a throwaway backend seeded only by `seed_project_data`.
-- Request outside the demo path: "skeleton isn't done yet — X still fails; the smallest piece that serves it is Y" and offer Y. If they insist: push back once, never twice. Build the smallest version as its own commit after the current skeleton step is committed, add it to SPEC.md nice-to-haves (must-haves if they say so), log it in Decisions.
+- As soon as the path works once, write `frontend/e2e/demo_path.py`: same shape as `frontend/e2e/smoke.py`, URL as `sys.argv[1]`, exits non-zero on any failed step; it replays SPEC.md's demo script and asserts what a judge sees at each step. It must also be safe to run against the deployed app: create nothing a judge would see, or clean up after itself. `/check` runs it from then on against a throwaway backend holding `smoke_test.py`'s rows plus `seed_project_data`'s.
+- Request outside the demo path: "skeleton isn't done yet — X still fails; the smallest piece that serves it is Y" and offer Y. If they accept waiting ("later"): add it to SPEC.md and CLAUDE.md → Scope nice-to-haves now, build nothing. If they insist: push back once, never twice, then build it per CLAUDE.md → Workflow's feature-request rule, as its own commit after the current skeleton step is committed.
 Exit (milestone 1): `/check` green including `demo_path.py`, and the human clicked through the demo on localhost. Write `PHASE: 3 — milestone 1 done at hour N`.
-Cut rule, past K+10 and not there: cut the must-have whose demo step is last in the script and furthest from the wow moment — shorten SPEC.md's demo script and `demo_path.py` to match, move it to nice-to-haves, say "Cutting X: it's step 5 of 5, the wow moment is step 3" — repeat until green.
+Cut rule, past K+10 and not there: cut the must-have whose demo step is last in the script and furthest from the wow moment — shorten SPEC.md's demo script and `demo_path.py` to match, move it to the top of nice-to-haves, say "Cutting X: it's step 5 of 5, the wow moment is step 3" — repeat until green.
 
-## Deploy (Phases 2–4)
+## Deploy
 
-Deploy is the human's task (DEPLOY.md), never a gate: you build, they deploy. First turn after K+4 with `deployed: no`: write `WAITING ON YOU: deploy per DEPLOY.md (asked HH:MM)` in Current status and say it once. From K+10, whenever that timestamp is an hour or more old, say it again (first in the turn's AskUserQuestion if there is one) and update the timestamp. When they paste both URLs into CLAUDE.md → Deployed: flip `deployed: yes`, drop the line. The deployed checks — `smoke_test.py <render-url> <vercel-url>`, then `seed.py <render-url>` (every time: it's idempotent and ships new `seed_project_data`) — run only after the human says Render shows green: you can't see Render's dashboard, and before green you're testing the old build.
+Deploy is the human's task (DEPLOY.md), never a gate: you build, they deploy. First turn after K+4 with `deployed: no`: write `WAITING ON YOU: deploy per DEPLOY.md (asked HH:MM)` in Current status and say it once. From K+10, whenever that timestamp is an hour or more old, say it again (first in the turn's AskUserQuestion if there is one) and update the timestamp — in Away mode leave the timestamp, the human hasn't seen it. When they give both URLs (in chat or in CLAUDE.md): write them under Deployed, flip `deployed: yes`, drop the line, commit CLAUDE.md. "Deployed" / "it's up" counts as Render green. The deployed checks — `smoke_test.py <render-url> <vercel-url>`, then `seed.py <render-url>` (every time: it's idempotent and adds new `seed_project_data` rows, never updating existing ones) — run only after the human says Render shows green on the latest commit: you can't see Render's dashboard, and before green you're testing the old build.
 
 ## Phase 3 — Build-out (milestone 1 → K+24)
 
@@ -44,11 +44,12 @@ Exit: every must-have ticked and green in `/check`. Write `PHASE: 4 — all must
 
 ## Away mode (the human says "keep going, I'm going to sleep")
 
-Any phase. Before they leave: run `git push` once so you know it works without a prompt, and finish-and-commit or WIP-and-revert (below) anything uncommitted. Then keep working inside this same turn — once you end it, nothing runs until they're back — until the must-haves are exhausted or all BLOCKED:
-- Must-haves in SPEC.md order, `git push` after each commit.
-- Never call AskUserQuestion — it blocks until they return. Anything you'd ask, the deploy nag included, goes in a `WAITING ON YOU: …` line. A taste question where switching later is cheap: build the recommendation, log `ASSUMED: …` in Decisions. Expensive: `WAITING ON YOU`, move to the next must-have.
-- A fix that fails twice: `git add` its files — not CLAUDE.md — then `git commit -m "WIP (blocked): X"` and `git revert --no-edit HEAD`. Then write `BLOCKED: X — attempt in commit <WIP sha>` in Current status, `git commit -m "Status: X blocked" CLAUDE.md`, `git push`, move on. Never loop on it, never leave a red diff in the tree.
-- Must-haves exhausted: `/check`, update status, commit CLAUDE.md, `git push`, stop. No nice-to-haves, no design direction, no sponsor integration alone.
+Any phase. Before they leave: run `git push` once so you know it works without a prompt, and finish-and-commit or WIP-and-revert (Recovery) anything uncommitted. Then keep working inside this same turn — once you end it, nothing runs until they're back — until the must-haves are exhausted or all BLOCKED:
+- Must-haves in SPEC.md order; `git push` and `date` after each commit.
+- Never call AskUserQuestion — it blocks until they return. Where CLAUDE.md → How to read me would ask first: a `WAITING ON YOU: …` line, then the next must-have. Where it would build the recommendation: do that and log `ASSUMED: …` in Decisions.
+- A fix that fails twice: WIP-and-revert it (Recovery) with the message `WIP (blocked): X`, write `BLOCKED: X — attempt in commit <the short sha git commit printed>` in Current status, `git commit -m "Status: X blocked" CLAUDE.md`, `git push`, move on. Never loop on it, never leave a red diff in the tree.
+- Between must-haves, Read `.claude/tmp/usage.json` (the Budget hook can't reach you mid-turn): `five_hour.used_percentage` ≥ 90 → go straight to the last step.
+- Must-haves exhausted: in Phase 4, do Phase 4's empty/loading/error states and 375px fixes on the demo path first. Then `/check`, update status, commit CLAUDE.md, `git push`, and end the turn with the one-line status (Knowing where we are step 3) and every `WAITING ON YOU` / `BLOCKED` / `ASSUMED` line verbatim. No nice-to-haves, no design direction, no sponsor integration alone.
 
 ## Phase 4 — Polish (K+24 → E−3)
 
@@ -56,26 +57,28 @@ Entry: `PHASE: 4`.
 - One `frontend-design` pass over the demo path (CLAUDE.md → How to read me says how).
 - Empty, loading, and error states on the demo path, in the interface's voice.
 - Mobile: screenshot the demo path at 375px.
-- Nice-to-haves in SPEC.md's cut order. If the demo path goes red while building one: one fix attempt, then `git add` its files (not CLAUDE.md), `git commit -m "WIP (dropped): <name>"`, `git revert --no-edit HEAD`, note `BLOCKED: <name> (nice-to-have) — attempt in <sha>` — don't debug a nice-to-have.
-- After each push that touches the demo path: the deployed checks (Deploy section).
+- Nice-to-haves top-down. If the demo path goes red while building one: one fix attempt, then WIP-and-revert it (Recovery) with the message `WIP (dropped): <name>` and note `BLOCKED: <name> (nice-to-have) — attempt in <sha>` — don't debug a nice-to-have.
+- After each push that touches the demo path: the deployed checks (Deploy).
 Exit: E−3 by the Timeline. Write `PHASE: 5 — feature freeze`, then announce it.
 
 ## Phase 5 — Freeze and ship (E−3 → E)
 
-Entry: `PHASE: 5` (CLAUDE.md → Workflow can trigger it early — write it first).
+Entry: `PHASE: 5`, or the human says judging starts within 3 hours (CLAUDE.md → Workflow) — write it first.
 - Feature = new endpoint, table, screen, or `demo_path.py` step. Copy, CSS, empty/error states on existing screens are fixes. Features are refused without negotiation: "Frozen — added as `LATER: …` in Current status."
-- Every turn: `/check` + `git status -sb`, then exactly one next action, in this priority: broken → unpushed → undeployed (`deployed: no`, or the deployed checks fail after the human said Render is green) → pitch; while Render is still building, pitch is next. If the action is pitch: the human types `/pitch`, then `/ship-check` (pitch first — it rewrites the README that ship-check verifies; you can't run either).
-- Final code push by E−1:30 (venue wifi is slow; the phone hotspot is the fallback). When the human says green: the deployed checks, then `python frontend/e2e/smoke.py <vercel-url>` and `python frontend/e2e/demo_path.py <vercel-url>`. Not green by E−0:45: stop pushing code; run `python frontend/e2e/demo_path.py <vercel-url>` — passes → the deployed URL is a valid backup, fails → localhost only — and tell the human to run `/pitch Backup: Render not green — demo localhost`. The pitch commit (PITCH.md, README.md, `docs/`, the index.html title/meta) is always committed and pushed; once Vercel is green, rerun `python frontend/e2e/smoke.py <vercel-url>`.
+- Every turn: `/check` + `git status -sb`, then exactly one next action, in this priority: broken → unpushed (before E−0:45) → undeployed (`deployed: no`, or the deployed checks fail after the human said Render is green) → pitch; while Render is still building, pitch is next. If the action is pitch: the human types `/pitch`, then `/ship-check` (pitch first — it rewrites the README that ship-check verifies; you can't run either).
+- Final code push by E−1:30 (venue wifi is slow; the phone hotspot is the fallback). When the human says green: the deployed checks, then `python frontend/e2e/smoke.py <vercel-url>` and `python frontend/e2e/demo_path.py <vercel-url>`. Not green by E−0:45: stop pushing code; run `python frontend/e2e/demo_path.py <vercel-url>` — passes → the deployed URL is a valid backup, fails → localhost only — and tell the human to run `/pitch Backup: Render not green — demo localhost`. The `/pitch` commit is the only push allowed after E−0:45, never within 15 minutes of a demo; once Vercel is green, rerun `python frontend/e2e/smoke.py <vercel-url>`.
+- The 3-minute demo video is required on Devpost (submissions close at E). The human records it, narrating `/pitch`'s presentation script over the demo path on localhost, by E−1:00; your part is a green `/check` and seeded demo data before they start, and no code changes while they record.
 - E−0:30: stop touching code and say so. A demo-path bug found after that is routed around, not fixed: the human reruns `/pitch` with a note naming the seeded record to open instead.
-Exit: `/ship-check` green, PITCH.md exists, the human rehearsed once with a timer.
+Exit: `/ship-check` green, PITCH.md exists, the video is recorded, the human rehearsed the 3-minute presentation once with a timer.
 
 ## Recovery (any phase)
 
 - **Broken:** `/debug`. **Same fix failed twice:** CLAUDE.md → Workflow (human present) or Away mode (alone).
+- **WIP-and-revert X** (keeps the attempt in history, leaves the tree green, needs no human): `git add` its files — not CLAUDE.md — then `git commit -m "<message>"` and `git revert --no-edit HEAD`.
 - **Uncommitted breakage:** CLAUDE.md → Gotchas. **Committed breakage:** `git revert --no-edit <sha>`.
 - **`/check` red after a big change:** fix in order lint → build → backend smoke → browser check → demo path.
 - **Session lost / reboot:** the human runs `claude --continue`; your first turn is Knowing where we are plus `git status` and `git diff --stat` (uncommitted work: finish it, `/check`, commit); the dev servers are dead — tell them `.\dev.ps1`.
-- **Deployed app misbehaves:** `smoke_test.py <render-url> <vercel-url>` names the culprit (CORS / wrong build URL / backend); `db-error` from `/api/health` = the Postgres link; demo login rejected = new database → `seed.py <render-url>`.
+- **Deployed app misbehaves:** `smoke_test.py <render-url> <vercel-url>` names the culprit (CORS / wrong build URL / backend); `db-error` from `/api/health` = the Postgres link; demo data missing = new database → `seed.py <render-url>`.
 - **An AI route says "Too many requests" or "AI quota for today is used up":** our own limits (30/minute per visitor, or `AI_DAILY_LIMIT` — in-memory, so restarting the backend resets it; raising it is the human's: `backend/.env` locally, Render's env tab deployed).
-- **AI answers wearing the fallback badge:** `backend/server.log` has a `WARNING … AI fallback used: …` line saying why. `AI request failed (429)` = Google's free quota: say the reset time (midnight Pacific), stop exercising AI routes on the dev server, lower `AI_DAILY_LIMIT`; a second key is the human's call. Demoing on the fallback is fine if the badge is visible.
+- **AI answers wearing the fallback badge:** `backend/server.log` has a `WARNING … AI fallback used: …` line saying why (deployed: ask the human for the line from Render → Logs). `AI request failed (429)` = Google's free quota: say the reset time (midnight Pacific), stop exercising AI routes on the dev server, lower `AI_DAILY_LIMIT`; a second key is the human's call. Demoing on the fallback is fine if the badge is visible.
 - **Usage limit warning:** CLAUDE.md → Budget. **Laptop dead:** the human clones onto another machine (`setup-machine.ps1`), re-enters `.env` keys, runs README setup; you resume from the repo — only unpushed work is lost.

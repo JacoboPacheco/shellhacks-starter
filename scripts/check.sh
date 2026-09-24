@@ -106,7 +106,7 @@ if [ "$up" -eq 1 ] && [ -n "$E2E_PY" ]; then
   fi
 elif [ "$up" -eq 1 ]; then
   skipped_browser=1
-  echo "(SKIPPED: needs Python Playwright — python -m pip install playwright && playwright install chromium)"
+  echo "(SKIPPED: needs Python Playwright — python -m pip install playwright && python -m playwright install chromium)"
   [ -n "${CI:-}" ] && failed+=("browser check (Playwright missing in CI)")
   # Once the demo path exists, a skipped browser stage would hide a broken demo — that's a failure, not a skip.
   [ -f "$ROOT/frontend/e2e/demo_path.py" ] && failed+=("demo path (frontend/e2e/demo_path.py exists but Playwright is missing)")
