@@ -25,8 +25,16 @@ kill_port() {
     for pid in $(netstat -ano 2>/dev/null | grep LISTENING | grep ":$1 " | awk '{print $5}' | sort -u); do
       taskkill //F //PID "$pid" >/dev/null 2>&1
     done
+  elif command -v lsof >/dev/null 2>&1; then
+    lsof -ti :"$1" 2>/dev/null | xargs -r kill 2>/dev/null
   fi
 }
+
+# the interpreter that has Playwright: the backend venv if it's there, else the system python
+E2E_PY=""
+for candidate in "$PY" python python3; do
+  if "$candidate" -c "import playwright.sync_api" >/dev/null 2>&1; then E2E_PY="$candidate"; break; fi
+done
 
 cleanup() {
   kill_port "$PORT"; kill_port "$PREVIEW_PORT"
@@ -55,7 +63,7 @@ rm -f "$ROOT/backend/check.db"
 # network: it verifies the deterministic "not configured" path instead.
 # exec so SERVER_PID is the server itself, not a wrapper subshell
 (cd "$ROOT/backend" && JWT_SECRET="${JWT_SECRET:-check-only-secret}" DATABASE_URL="sqlite:///./check.db" GEMINI_API_KEY="" \
-  ALLOWED_ORIGINS="http://localhost:$PREVIEW_PORT" \
+  ALLOWED_ORIGINS="http://localhost:$PREVIEW_PORT" LOG_FILE="check-app.log" \
   exec "$PY" -m uvicorn main:app --port "$PORT" > "$ROOT/backend/check-server.log" 2>&1) &
 SERVER_PID=$!
 
@@ -76,9 +84,10 @@ else
 fi
 
 echo "== browser check (built app on :$PREVIEW_PORT against :$PORT) =="
-if [ "$up" -eq 1 ] && python -c "import playwright.sync_api" >/dev/null 2>&1; then
+skipped_browser=0
+if [ "$up" -eq 1 ] && [ -n "$E2E_PY" ]; then
   kill_port "$PREVIEW_PORT"
-  (cd "$ROOT/frontend" && exec npx vite preview --port "$PREVIEW_PORT" --strictPort > "$ROOT/frontend/check-preview.log" 2>&1) &
+  (cd "$ROOT/frontend" && exec node node_modules/vite/bin/vite.js preview --port "$PREVIEW_PORT" --strictPort > "$ROOT/frontend/check-preview.log" 2>&1) &
   PREVIEW_PID=$!
   pup=0
   for _ in $(seq 1 20); do
@@ -86,17 +95,19 @@ if [ "$up" -eq 1 ] && python -c "import playwright.sync_api" >/dev/null 2>&1; th
     sleep 0.5
   done
   if [ "$pup" -eq 1 ]; then
-    python "$ROOT/frontend/e2e/smoke.py" "http://localhost:$PREVIEW_PORT" || failed+=("browser check")
+    "$E2E_PY" "$ROOT/frontend/e2e/smoke.py" "http://localhost:$PREVIEW_PORT" || failed+=("browser check")
   else
     echo "vite preview never came up:"; tail -10 "$ROOT/frontend/check-preview.log"; failed+=("browser check")
   fi
-else
-  echo "(skipped: needs Python Playwright — pip install playwright && playwright install chromium)"
+elif [ "$up" -eq 1 ]; then
+  skipped_browser=1
+  echo "(SKIPPED: needs Python Playwright — python -m pip install playwright && playwright install chromium)"
+  [ -n "${CI:-}" ] && failed+=("browser check (Playwright missing in CI)")
 fi
 
 echo
 if [ ${#failed[@]} -eq 0 ]; then
-  echo "ALL CHECKS PASSED"
+  if [ "$skipped_browser" -eq 1 ]; then echo "ALL CHECKS PASSED (browser check skipped — install Playwright)"; else echo "ALL CHECKS PASSED"; fi
   exit 0
 fi
 echo "FAILED: ${failed[*]}"

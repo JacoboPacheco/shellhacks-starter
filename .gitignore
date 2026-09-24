@@ -11,6 +11,7 @@ server.log
 frontend.log
 check-server.log
 check-preview.log
+check-app.log*
 backend/uploads/
 .claude/tmp/
 .claude/settings.local.json

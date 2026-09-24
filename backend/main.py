@@ -17,7 +17,7 @@ load_dotenv()
 # Mirror uvicorn's output (requests + tracebacks) to backend/server.log so it can be
 # read by tools even when the server runs in someone else's terminal window.
 _log_file = logging.handlers.RotatingFileHandler(
-    Path(__file__).parent / "server.log", maxBytes=2_000_000, backupCount=1, encoding="utf-8"
+    Path(__file__).parent / os.getenv("LOG_FILE", "server.log"), maxBytes=2_000_000, backupCount=1, encoding="utf-8"
 )
 _log_file.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
 # "uvicorn.error" propagates to "uvicorn"; attaching to both would log each line twice
@@ -70,6 +70,7 @@ def health():
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
-    except Exception as e:  # noqa: BLE001 — any DB failure should surface here
-        return JSONResponse({"status": "db-error", "detail": str(e)[:200]}, status_code=503)
+    except Exception:  # noqa: BLE001 — any DB failure should surface here
+        logging.getLogger("uvicorn.error").exception("health check: database unusable")
+        return JSONResponse({"status": "db-error", "detail": "database unusable — see server.log"}, status_code=503)
     return {"status": "ok"}

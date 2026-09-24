@@ -14,15 +14,17 @@ export default function useAuth() {
 
   // Always resolves; never updates state synchronously (keeps the effect below lint-clean).
   const refresh = useCallback(() => {
+    const me = () => api('/api/auth/me')
+    // Demo identity: log in, and if the account doesn't exist (a redeploy wiped the
+    // database), create it — so the demo self-heals instead of showing a logged-out page.
+    const demoLogin = () =>
+      apiLogin(DEMO_EMAIL, DEMO_PASSWORD).catch(() => apiSignup(DEMO_EMAIL, DEMO_PASSWORD))
     const start = getToken()
-      ? Promise.resolve()
+      ? me().catch(() => (DEMO_EMAIL && DEMO_PASSWORD ? demoLogin().then(me) : Promise.reject()))
       : DEMO_EMAIL && DEMO_PASSWORD
-        ? apiLogin(DEMO_EMAIL, DEMO_PASSWORD)
+        ? demoLogin().then(me)
         : Promise.reject(new Error('logged out'))
-    return start
-      .then(() => api('/api/auth/me'))
-      .then((u) => setUser(u))
-      .catch(() => setUser(null))
+    return start.then((u) => setUser(u)).catch(() => setUser(null))
   }, [])
 
   useEffect(() => {

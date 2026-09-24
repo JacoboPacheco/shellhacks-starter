@@ -15,6 +15,7 @@ only — nothing else in the app knows which model is behind it.
 
 import asyncio
 import base64
+import http.client
 import json
 import os
 import urllib.error
@@ -96,8 +97,9 @@ async def _complete(prompt: str, system: str | None, json_mode: bool, image: tup
     except urllib.error.HTTPError as e:
         detail = e.read().decode(errors="replace")[:300]
         raise HTTPException(status_code=502, detail=f"AI request failed ({e.code}): {detail}")
-    except (urllib.error.URLError, OSError, ValueError) as e:
-        # URLError: unreachable; OSError: dropped connection; ValueError: non-JSON reply
+    except (urllib.error.URLError, OSError, ValueError, http.client.HTTPException) as e:
+        # URLError: unreachable; OSError: dropped connection; ValueError: non-JSON reply;
+        # HTTPException: truncated or malformed reply
         raise HTTPException(status_code=502, detail=f"AI request failed: {e}")
 
     try:
