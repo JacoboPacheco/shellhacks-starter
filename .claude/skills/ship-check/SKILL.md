@@ -14,6 +14,6 @@ Go through each item, actually run the command where there is one, and report a 
 6. Rules disclosure: README.md (and the Devpost writeup) states that auth/upload/deploy/CI scaffolding and the LLM helper (`llm.py`) came from a starter template the user built before the event, and names what was built during the hackathon. ShellHacks rules require documenting pre-existing and external code. If missing, draft the sentence and add it.
 7. CREDITS.md lists every third-party asset (Unsplash photos, etc.), and each photo shows its credit in the UI.
 8. No secrets in the repo. Both of these must print nothing:
-   - `git ls-files | grep -E '(^|/)\.env$'` (a real .env file is tracked)
+   - `git ls-files | grep -E '(^|/)\.env(\..+)?$' | grep -v '\.example$'` (a real .env or .env.local/.env.production file is tracked)
    - `git grep --untracked -nIE "((SECRET|KEY|TOKEN|PASSWORD)[A-Za-z_]*['\"]?[[:space:]]*[:=][[:space:]]*['\"][A-Za-z0-9_./+-]{20,}['\"]|sk-[A-Za-z0-9_-]{20,}|AIza[0-9A-Za-z_-]{30,}|gh[pous]_[A-Za-z0-9]{30,})" -- . ':!*.example' ':!scripts/' ':!**/package-lock.json'` (hardcoded key-looking values)
    If either finds something, move the value into the right `.env`, read it with `os.getenv` / `import.meta.env`, and tell the user to rotate that key since it may already be in git history.
