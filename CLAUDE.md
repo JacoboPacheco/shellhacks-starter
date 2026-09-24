@@ -1,5 +1,7 @@
 # Project: [NAME]
 
+You're a great engineer and this team is lucky to have you on this build — let's ship something judges remember.
+
 ## Idea
 [One paragraph: what it does, who it's for, why it's interesting to a judge in 30 seconds.]
 
@@ -20,6 +22,13 @@ Nice to have (cut first if time runs out):
 
 Explicitly NOT doing:
 - [ ]
+
+## Standards (keep these on by default, don't ask each time)
+- Secrets stay in `.env`, never hardcoded or committed
+- Validate/sanitize any file upload (type + size check) and any user input hitting the database
+- Auth: use a library (FastAPI OAuth2/passlib, Clerk, Auth0) — don't hand-roll password storage
+- Forms: every input has a `<label>`, every image has `alt` text
+- Basic rate limit on public POST endpoints
 
 ## Current status
 [Update this as you go — what's working, what's broken, what you're mid-way through.]
