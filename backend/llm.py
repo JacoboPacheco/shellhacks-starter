@@ -25,10 +25,15 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from auth import get_current_user
-from limiter import limiter
+from limiter import global_key, limiter
 from models import User
 
 API_BASE = os.getenv("GEMINI_API_BASE", "https://generativelanguage.googleapis.com/v1beta").rstrip("/")
+# Whole-app cap on AI calls per day, across all users. The demo account is public,
+# so a per-IP limit alone can't protect the free quota from one person with a loop.
+# Put this decorator on every route that calls complete().
+AI_DAILY_LIMIT = os.getenv("AI_DAILY_LIMIT", "400/day")
+AI_QUOTA_MESSAGE = "AI quota for today is used up — try again tomorrow"
 # Flash-Lite: the free tier allows ~500 requests/day on Lite models vs ~20/day on
 # full Flash (as of Sept 2026) — a demo needs the 500. Override with GEMINI_MODEL.
 MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
@@ -117,8 +122,10 @@ def status():
     return {"configured": configured(), "model": MODEL}
 
 
-# Example route — copy this shape for real features (auth required, rate limited).
+# Example route — copy this shape for real features: auth required, per-visitor
+# rate limit, AND the shared daily cap (both decorators).
 @router.post("/ask")
 @limiter.limit("30/minute")
+@limiter.limit(AI_DAILY_LIMIT, key_func=global_key, error_message=AI_QUOTA_MESSAGE)
 async def ask(request: Request, body: AskRequest, user: User = Depends(get_current_user)):
     return {"text": await complete(body.prompt)}

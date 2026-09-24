@@ -17,4 +17,10 @@ def client_ip(request: Request) -> str:
     return get_remote_address(request)
 
 
+def global_key(request: Request) -> str:
+    # one shared bucket for everyone — for limits that protect a finite resource
+    # (an API's free daily quota) rather than fairness between users
+    return "global"
+
+
 limiter = Limiter(key_func=client_ip)
