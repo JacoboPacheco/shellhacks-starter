@@ -26,6 +26,8 @@ npm run dev
 
 Open http://localhost:5173 — it should show "Backend status: ok". If it says "backend unreachable", the backend isn't running or isn't on port 8000.
 
+**Verify the backend is actually working** (not just running): with the backend up, run `venv\Scripts\python smoke_test.py` from `backend/`. It checks health, signup, auth, and rejection paths, and exits non-zero if anything's broken.
+
 ## Deploying
 
 See [DEPLOY.md](./DEPLOY.md).
