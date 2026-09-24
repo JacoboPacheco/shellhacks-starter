@@ -6,6 +6,7 @@
 - [ ] Put the starter on GitHub: `gh auth login`, then `gh repo create shellhacks-starter --public --source . --push`
 - [ ] On github.com → the repo → Settings → tick **Template repository**. Kickoff day then starts from a one-liner, and the new repo shows "generated from …/shellhacks-starter" — built-in disclosure of the pre-existing code.
 - [ ] Gaming PC set up and reachable from the laptop over a phone hotspot (REMOTE.md)
+- [ ] Free API keys created now, not at hour 3, and saved somewhere you can paste from: Gemini (aistudio.google.com/apikey — most ideas end up wanting an LLM call; the backend's `llm.py` is wired for it, defaulting to a Flash-Lite model because that's the one with a usable free quota — confirm at aistudio.google.com/rate-limit), Unsplash (for photos). If a sponsor track you care about has an API, get that key too.
 
 ## First 15 minutes
 - [ ] On the gaming PC (over Remote-SSH from the laptop), in `C:\dev` — **outside OneDrive**, which is slow and locks files mid-build:
@@ -21,7 +22,9 @@
 
 ## Building
 - [ ] Dev servers over Remote-SSH: **don't use `dev.ps1`** (its windows open on the gaming PC's screen, not yours). In VS Code, open two terminals and run the backend and frontend commands from CLAUDE.md → Commands. VS Code forwards port 5173 automatically when Vite prints its URL; if the laptop browser shows nothing, add 5173 in the **Ports** panel. The backend needs no forward — Vite proxies `/api` to it.
-- [ ] Keep CLAUDE.md's "Current status" updated — this is what keeps Claude Code oriented across a long session
+- [ ] Claude keeps CLAUDE.md's "Current status" and "Decisions" updated after each commit — glance at them when you come back from a break; they're the session's memory
+- [ ] Three Claude Code moves worth knowing: a change made things worse → press **Esc twice** and rewind to before it; a side question you don't want cluttering the session → start it with `/btw`; the session feels confused after many corrections → `/clear` and restate the task (Claude will re-read CLAUDE.md, SPEC.md, and Current status)
+- [ ] Watch the status line at the bottom: `ctx` is how full Claude's memory is (it compacts itself near the top — fine), `5h` is your usage limit, `↑N` is unpushed commits
 - [ ] Deploy early (see DEPLOY.md), not at hour 30 — a broken deploy found early is a non-event; found late is a crisis
 - [ ] `git push` every few hours — backup if the gaming PC dies, and it keeps the timestamped history safe (Claude reminds you at 4 unpushed commits)
 - [ ] Re-check Scope every few hours — cut "nice to have" the moment you're behind

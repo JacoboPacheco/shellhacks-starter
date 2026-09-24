@@ -22,6 +22,7 @@ for _name in ("uvicorn", "uvicorn.error", "uvicorn.access"):
     logging.getLogger(_name).addHandler(_log_file)
 
 import auth
+import llm
 import uploads
 from database import Base, engine
 from limiter import limiter
@@ -44,6 +45,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(uploads.router)
+app.include_router(llm.router)
 app.mount("/uploads", StaticFiles(directory=uploads.UPLOAD_DIR), name="uploads")
 
 

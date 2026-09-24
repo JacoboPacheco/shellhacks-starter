@@ -9,7 +9,7 @@ After the practice run, delete the practice services (Render: service → Settin
 
 1. Push this repo to GitHub.
 2. render.com → New → **Blueprint** → connect the repo. Render reads `render.yaml` and shows one service, `shellhacks-backend`.
-3. It asks for `ALLOWED_ORIGINS` — put `http://localhost:5173` for now (you'll change it in section 3). `JWT_SECRET` is generated for you.
+3. It asks for `ALLOWED_ORIGINS` — put `http://localhost:5173` for now (you'll change it in section 3). `JWT_SECRET` is generated for you. If the idea uses AI, add `GEMINI_API_KEY` under Environment after the service exists (same value as in `backend/.env`).
 4. Apply. Wait for the deploy to go green. Copy the URL (e.g. `https://shellhacks-backend.onrender.com`) into CLAUDE.md under **Deployed**.
 5. Confirm: `https://<your-render-url>/api/health` shows `{"status":"ok"}`.
 

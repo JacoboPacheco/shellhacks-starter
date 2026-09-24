@@ -40,6 +40,8 @@ Run shell commands with the Bash tool (Git Bash), not PowerShell — everything 
 - If the idea needs accounts: `const { user, loading, login, signup, logout } = useAuth()` from `frontend/src/useAuth.js`, and render `<AuthForm login={login} signup={signup} />` when `user` is null. Already tested end to end — reuse it, don't rebuild auth UI.
 - New backend feature = new router module shaped like `backend/uploads.py`, then `app.include_router(...)` in `main.py`. Protect routes with `Depends(get_current_user)` from `auth.py`. Rate-limit public POSTs with `@limiter.limit("N/minute")` (the handler needs a `request: Request` param).
 - Tables go in `backend/models.py` and are created on startup.
+- AI calls: `from llm import complete` → `await complete(prompt, system=..., json_mode=True)`; `POST /api/ai/ask` in `llm.py` is the example route (auth + rate limit). It needs `GEMINI_API_KEY`; without it every call returns a clear 503, so build the feature anyway and ask me for the key once at the end. Frontend: `ask(prompt)` in `api.js`.
+- Visual work: brief the `frontend-design` skill with the Idea, the audience, and anything in Decisions; it plans palette/type/layout first — accept the plan unless it reads like a template, then let it code.
 - Every new endpoint gets a check in `backend/smoke_test.py`, so `/check` keeps covering the whole app.
 
 ## Standards (keep these on by default, don't ask each time)
@@ -75,6 +77,9 @@ I talk loosely on purpose ("make it pop", "add a thing where people can save stu
 - When something's broken, use `/debug`: reproduce and read the actual error (server log, browser console) before changing code.
 - When compacting context, preserve: the feature in progress and its acceptance check, what's working vs broken, the files changed since the last commit, and any command that failed and why.
 - Photos: as the last step of a turn where pages got finished and `/check` passed, run the `images` skill — place your best picks, then ask me once to confirm or swap. Never mid-feature, never in the same turn a design direction was just applied (photos wait for the next pass), and never block on my answer.
+
+## Budget
+Every prompt arrives with "Budget right now: …" (5-hour and weekly usage, from a hook). Don't change how you work because of it — just don't let me get surprised: when the 5-hour limit passes 85%, or the weekly passes 70%, say so once, with the reset time, before starting the turn's work; and if a limit is about to be hit mid-feature, commit and push what's safe first. Model choice is mine (`/model`).
 
 ## Gotchas
 - SQLite `create_all` never alters existing tables: after changing a model's columns, stop the backend and delete `backend/app.db` (dev data is disposable).

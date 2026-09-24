@@ -14,4 +14,5 @@ Write the pitch for what exists, not what was planned. Extra notes from the user
    - **Judge Q&A:** 5 likely questions with one-sentence answers (e.g. "what happens with bad input?", "how would this scale?", "what did the AI tools do vs. you?"). Answer the AI one honestly.
 3. Keep it tight: the whole file under 120 lines. The user will read it out loud, so short sentences.
    Also rewrite the top of `README.md` for the project (judges click the repo link): name, one-paragraph description, the live URL, a screenshot placeholder, how to run it locally, and the disclosure line. Move the starter-kit notes below it under "Development".
-4. Tell the user to time themselves reading the script once — if it's over 2 minutes, cut the "what's next" section first.
+4. Screenshots for Devpost and the README: with the app running, use the `webapp-testing` skill (Python Playwright) to save `docs/screenshots/01-<screen>.png` … for the 3–4 screens in the demo script, at 1280×800 with real demo data on screen. Reference them from README.md.
+5. Tell the user to time themselves reading the script once — if it's over 2 minutes, cut the "what's next" section first.

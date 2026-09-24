@@ -1,0 +1,93 @@
+"""
+LLM helper (Gemini, free tier). Usage from any router:
+
+    from llm import complete
+    text = await complete("Summarize this: ...", system="You are terse.")
+    data = await complete(prompt, json_mode=True)   # returns a JSON string
+
+Needs GEMINI_API_KEY in backend/.env (free key: https://aistudio.google.com/apikey).
+Without it every call raises a clear 503 so the feature can be built and demoed
+as "not configured" instead of crashing. Swap providers by rewriting `complete`
+only — nothing else in the app knows which model is behind it.
+"""
+
+import asyncio
+import json
+import os
+import urllib.error
+import urllib.request
+
+from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import BaseModel, Field
+
+from auth import get_current_user
+from limiter import limiter
+from models import User
+
+API_BASE = os.getenv("GEMINI_API_BASE", "https://generativelanguage.googleapis.com/v1beta").rstrip("/")
+# Flash-Lite: the free tier allows ~500 requests/day on Lite models vs ~20/day on
+# full Flash (as of Sept 2026) — a demo needs the 500. Override with GEMINI_MODEL.
+MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
+TIMEOUT_SECONDS = 60
+
+router = APIRouter(prefix="/api/ai", tags=["ai"])
+
+
+def configured() -> bool:
+    return bool(os.getenv("GEMINI_API_KEY"))
+
+
+def _post_json(url: str, body: dict, key: str) -> dict:
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(body).encode(),
+        headers={"Content-Type": "application/json", "x-goog-api-key": key},
+        method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=TIMEOUT_SECONDS) as resp:
+        return json.loads(resp.read())
+
+
+async def complete(prompt: str, system: str | None = None, json_mode: bool = False) -> str:
+    key = os.getenv("GEMINI_API_KEY")
+    if not key:
+        raise HTTPException(
+            status_code=503,
+            detail="AI is not configured: add GEMINI_API_KEY to backend/.env (free key at aistudio.google.com/apikey)",
+        )
+
+    body: dict = {"contents": [{"parts": [{"text": prompt}]}]}
+    if system:
+        body["systemInstruction"] = {"parts": [{"text": system}]}
+    if json_mode:
+        body["generationConfig"] = {"responseMimeType": "application/json"}
+
+    url = f"{API_BASE}/models/{MODEL}:generateContent"
+    try:
+        data = await asyncio.to_thread(_post_json, url, body, key)
+    except urllib.error.HTTPError as e:
+        detail = e.read().decode(errors="replace")[:300]
+        raise HTTPException(status_code=502, detail=f"AI request failed ({e.code}): {detail}")
+    except (urllib.error.URLError, TimeoutError) as e:
+        raise HTTPException(status_code=502, detail=f"AI request failed: {e}")
+
+    try:
+        return data["candidates"][0]["content"]["parts"][0]["text"]
+    except (KeyError, IndexError, TypeError):
+        raise HTTPException(status_code=502, detail="AI returned no text (empty or blocked response)")
+
+
+class AskRequest(BaseModel):
+    prompt: str = Field(min_length=1, max_length=8000)
+
+
+@router.get("/status")
+def status():
+    return {"configured": configured(), "model": MODEL}
+
+
+# Example route — copy this shape for real features (auth required, rate limited).
+@router.post("/ask")
+@limiter.limit("30/minute")
+async def ask(request: Request, body: AskRequest, user: User = Depends(get_current_user)):
+    return {"text": await complete(body.prompt)}

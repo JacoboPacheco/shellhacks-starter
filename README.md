@@ -53,6 +53,10 @@ Opens the backend (auto-reloads when files change) and frontend in two windows. 
 | Push reminder | When Claude finishes a turn with 2+ unpushed commits, it says so — pushes are your timestamped proof of event-time work and your backup if the machine dies |
 | Permissions | Routine commands (npm scripts, checks, git status/diff/commit) run without asking; `git push --force` and `git reset --hard` are denied; any other push still asks |
 | Plugins | `frontend-design` (visual polish) and `example-skills` (incl. `webapp-testing`) are registered in `.claude/settings.json`, so a fresh machine installs them on first open |
+| Status line | Bottom of the Claude Code window: model, context-usage bar, 5-hour limit, branch with unpushed count |
+| Budget awareness | Every prompt tells Claude how much of the 5-hour and weekly limits are left; CLAUDE.md's Budget section says how to act at 50 / 80 / 95% |
+
+Also in the backend: `llm.py` — a ready LLM helper (`await complete(prompt)`, Gemini free tier) with an example authenticated route. Without a key it returns a clear 503, so AI features can be built before the key exists.
 
 ## More
 

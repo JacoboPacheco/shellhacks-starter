@@ -7,6 +7,11 @@
     "example-skills@anthropic-agent-skills": true,
     "frontend-design@claude-code-plugins": true
   },
+  "statusLine": {
+    "type": "command",
+    "command": "node \"${CLAUDE_PROJECT_DIR:-.}/scripts/statusline.mjs\"",
+    "padding": 1
+  },
   "permissions": {
     "allow": [
       "Bash(bash scripts/check.sh)",
@@ -48,6 +53,18 @@
     ]
   },
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/usage-context.mjs\"",
+            "shell": "bash",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [

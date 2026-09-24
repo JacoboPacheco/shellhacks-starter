@@ -71,6 +71,9 @@ export async function signup(email, password) {
   return data
 }
 
+// Ask the backend's LLM helper (needs GEMINI_API_KEY on the backend; 503 otherwise).
+export const ask = (prompt) => api('/api/ai/ask', { method: 'POST', body: { prompt } })
+
 export async function uploadFile(file) {
   const form = new FormData()
   form.append('file', file)

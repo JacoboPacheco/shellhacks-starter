@@ -141,6 +141,34 @@ check("login ignores email case/whitespace", test_login_email_case_insensitive)
 check("valid image upload accepted", test_upload_valid_image)
 check("non-image upload rejected", test_upload_wrong_type_rejected)
 
+
+def test_ai_status():
+    payload = request("GET", "/api/ai/status")
+    assert isinstance(payload["configured"], bool)
+    return payload["configured"]
+
+
+def test_ai_ask_requires_auth():
+    request("POST", "/api/ai/ask", {"prompt": "hi"}, expect=401)
+
+
+def test_ai_ask_path():
+    configured = request("GET", "/api/ai/status")["configured"]
+    payload = request(
+        "POST", "/api/ai/ask", {"prompt": "Reply with the single word OK."},
+        headers={"Authorization": f"Bearer {token['value']}"},
+        expect=200 if configured else 503,
+    )
+    if configured:
+        assert payload["text"].strip()
+    else:
+        assert "GEMINI_API_KEY" in payload["detail"]
+
+
+check("ai status reports configured flag", test_ai_status)
+check("ai ask requires auth", test_ai_ask_requires_auth)
+check("ai ask works, or says clearly it's not configured", test_ai_ask_path)
+
 if failures:
     print(f"\n{len(failures)} check(s) failed: {', '.join(failures)}")
     sys.exit(1)
