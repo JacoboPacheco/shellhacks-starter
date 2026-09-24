@@ -1,6 +1,6 @@
 # Shellhacks starter
 
-FastAPI backend (SQLite locally, Postgres on Render — uploads live in the database too, so nothing is lost on deploys) + React (Vite) frontend, wired together and verified working end to end, plus a `.claude/` setup that makes Claude Code faster and more reliable on this repo.
+FastAPI backend (SQLite locally, Postgres on Render — uploads live in the database too, so nothing is lost on deploys) + React (Vite) frontend with a small UI kit and one example feature, wired together and verified working end to end, plus a `.claude/` setup that makes Claude Code faster and more reliable on this repo.
 At kickoff, generate the project's repo from this template, run `/spec` in Claude Code with your idea, and start building features instead of plumbing.
 
 > **"Running scripts is disabled on this system"?** Fresh Windows blocks `.ps1` files. Run any of this repo's scripts as `powershell -ExecutionPolicy Bypass -File .\script.ps1`, or allow them for your account once with `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
@@ -65,7 +65,10 @@ Demo account and demo data (recreate any time, locally or on Render): `backend\v
 | Status line | Bottom of the Claude Code window: model, context-usage bar, 5-hour limit, branch with unpushed count |
 | Time and budget awareness | Every prompt carries the current time (the playbook's phase rules are clock-based) and, when the status line refreshed in the last 20 minutes, the 5-hour and weekly usage; Claude warns when 85% of the 5-hour or 70% of the weekly limit is first crossed |
 
-Also in the backend: `llm.py` — a ready LLM helper (`await complete(prompt, fallback=...)`, Gemini free tier) with an example authenticated route. Without a key it returns a clear 503, so AI features can be built before the key exists.
+Also in the app:
+- `backend/llm.py` — a ready LLM helper (`await complete(prompt, fallback=...)`, `complete_json(...)` for parsed JSON; Gemini free tier) with an example authenticated route. Without a key it returns a clear 503 — or the fallback you passed — so AI features can be built before the key exists. A whole-app daily cap protects the free quota.
+- An **example feature** to copy for the first real one: `backend/items.py` (list/create/delete, auth, rate limit, AI-suggested tags that fall back gracefully) with its table, smoke checks, seed rows, and `frontend/src/ItemsPanel.jsx`. Delete or rename it once your own feature exists. `frontend/e2e/demo_path.example.py` shows the demo-path check Claude writes for your idea.
+- A small **UI kit** (`frontend/src/ui.jsx`: Button, Field, Card, EmptyState, Loading, ErrorBanner, Badge) and page shell (`Layout.jsx`), themed by the tokens at the top of `index.css` — light and dark, accessible by default.
 
 ## More
 

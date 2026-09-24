@@ -62,10 +62,21 @@ def get_token() -> str:
 
 
 def seed_project_data(token: str) -> None:
-    """Create the rows the demo needs, via the API, e.g.:
-    call("POST", "/api/posts", {"title": "Hello", "body": "..."}, token=token)
-    Keep it idempotent: check before creating, or make creation tolerate duplicates.
-    """
+    """Create the rows the demo needs, via the API. Idempotent: check before creating.
+    This seeds the EXAMPLE feature (items.py) — replace it with the project's own rows."""
+    status, existing = call("GET", "/api/items", token=token)
+    have = {it["title"] for it in existing} if status == 200 else set()
+    for title, notes in (
+        ("Welcome to the starter", "This row comes from seed_project_data in backend/seed.py."),
+        ("Try adding an item", "Tags are suggested by AI when GEMINI_API_KEY is set."),
+    ):
+        if title in have:
+            continue
+        status, payload = call("POST", "/api/items", {"title": title, "notes": notes}, token=token)
+        if status != 200:
+            print(f"could not create item {title!r}: {status} {payload}")
+            sys.exit(1)
+        print(f"created item {title!r}")
 
 
 if __name__ == "__main__":

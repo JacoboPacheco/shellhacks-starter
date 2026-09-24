@@ -6,11 +6,14 @@ LLM helper (Gemini, free tier). Usage from any router:
     data = await complete(prompt, json_mode=True)   # returns a JSON string
     text = await complete(prompt, fallback="(AI offline) Here's an example answer…")  # never raises
     text = await complete("List the questions on this whiteboard", image=(png_bytes, "image/png"))
+    data = await complete_json(prompt, fallback=NO_ANSWER)   # parsed JSON, one retry on bad JSON
 
 Needs GEMINI_API_KEY in backend/.env (free key: https://aistudio.google.com/apikey).
 Without it a call raises a clear 503 — or returns its `fallback` if one was given —
-so the feature can be built and demoed as "not configured" instead of crashing. Swap providers by rewriting `complete`
-only — nothing else in the app knows which model is behind it.
+so the feature can be built and demoed as "not configured" instead of crashing.
+The whole-app daily cap (AI_DAILY_LIMIT) is enforced in here too, so a route with a
+fallback keeps working when the day's quota is gone. Swap providers by rewriting
+`_complete` only — nothing else in the app knows which model is behind it.
 """
 
 import asyncio
@@ -19,6 +22,7 @@ import http.client
 import json
 import logging
 import os
+import time
 import urllib.error
 import urllib.request
 
@@ -26,15 +30,28 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from auth import get_current_user
-from limiter import global_key, limiter
+from limiter import limiter
 from models import User
 
 API_BASE = os.getenv("GEMINI_API_BASE", "https://generativelanguage.googleapis.com/v1beta").rstrip("/")
 # Whole-app cap on AI calls per day, across all users. The demo account is public,
 # so a per-IP limit alone can't protect the free quota from one person with a loop.
-# Put this decorator on every route that calls complete().
+# Enforced inside complete(): a call past the cap raises 429, or returns its
+# fallback if it has one. In-memory — a backend restart resets the count.
 AI_DAILY_LIMIT = os.getenv("AI_DAILY_LIMIT", "400/day")
 AI_QUOTA_MESSAGE = "AI quota for today is used up — try again tomorrow"
+_daily = {"day": "", "used": 0}
+
+
+def _take_daily_slot() -> bool:
+    cap = int(AI_DAILY_LIMIT.split("/")[0])
+    today = time.strftime("%Y-%m-%d")
+    if _daily["day"] != today:
+        _daily["day"], _daily["used"] = today, 0
+    if _daily["used"] >= cap:
+        return False
+    _daily["used"] += 1
+    return True
 # Flash-Lite: the free tier allows ~500 requests/day on Lite models vs ~20/day on
 # full Flash (as of Sept 2026) — a demo needs the 500. Override with GEMINI_MODEL.
 MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
@@ -82,6 +99,39 @@ async def complete(
         raise
 
 
+async def complete_json(
+    prompt: str,
+    system: str | None = None,
+    fallback: dict | list | None = None,
+    image: tuple[bytes, str] | None = None,
+) -> dict | list:
+    """`complete` in JSON mode, parsed. If the model returns invalid JSON it is asked
+    once more; then `fallback` is returned (or a 502 raised). Say what shape you want
+    in the prompt ('Answer as {"tags": ["..."]}'). Route pattern, same as complete():
+        data = await complete_json(prompt, fallback=NO_ANSWER)
+        offline = data is NO_ANSWER        # `is`, not ==: the fallback is a specific object
+    """
+    log = logging.getLogger("uvicorn.error")
+    text = ""
+    for attempt in range(2):
+        nudge = "" if attempt == 0 else "\n\nYour previous answer was not valid JSON. Reply with ONLY valid JSON."
+        try:
+            text = await _complete(prompt + nudge, system, True, image)
+        except HTTPException as e:
+            if fallback is not None:
+                log.warning("AI fallback used: %s", e.detail)
+                return fallback
+            raise
+        try:
+            return json.loads(text)
+        except ValueError:
+            continue
+    if fallback is not None:
+        log.warning("AI fallback used: invalid JSON twice: %r", text[:120])
+        return fallback
+    raise HTTPException(status_code=502, detail="AI returned invalid JSON twice")
+
+
 async def _complete(prompt: str, system: str | None, json_mode: bool, image: tuple[bytes, str] | None) -> str:
     key = os.getenv("GEMINI_API_KEY")
     if not key:
@@ -89,6 +139,8 @@ async def _complete(prompt: str, system: str | None, json_mode: bool, image: tup
             status_code=503,
             detail="AI is not configured: add GEMINI_API_KEY to backend/.env (free key at aistudio.google.com/apikey)",
         )
+    if not _take_daily_slot():
+        raise HTTPException(status_code=429, detail=AI_QUOTA_MESSAGE)
 
     parts: list[dict] = []
     if image is not None:
@@ -127,10 +179,10 @@ def status():
     return {"configured": configured(), "model": MODEL}
 
 
-# Example route — copy this shape for real features: auth required, per-visitor
-# rate limit, AND the shared daily cap (both decorators).
+# Example route — copy this shape for real features: auth required and a per-visitor
+# rate limit (the shared daily cap is inside complete()). This one has no fallback on
+# purpose, so an unconfigured key is a visible 503; demo-path routes pass fallback=.
 @router.post("/ask")
 @limiter.limit("30/minute")
-@limiter.limit(AI_DAILY_LIMIT, key_func=global_key, error_message=AI_QUOTA_MESSAGE)
 async def ask(request: Request, body: AskRequest, user: User = Depends(get_current_user)):
     return {"text": await complete(body.prompt)}

@@ -24,6 +24,7 @@ for _name in ("uvicorn", "uvicorn.access"):
     logging.getLogger(_name).addHandler(_log_file)
 
 import auth
+import items
 import llm
 import uploads
 from database import Base, add_missing_columns, engine
@@ -74,6 +75,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(uploads.router)
 app.include_router(llm.router)
+app.include_router(items.router)  # EXAMPLE feature — remove with items.py
 
 
 @app.get("/api/health")

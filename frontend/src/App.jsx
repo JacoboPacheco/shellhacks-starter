@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
 import { api } from './api'
+import ItemsPanel from './ItemsPanel'
+import Layout from './Layout'
+import { EmptyState, Loading } from './ui'
 import useAuth from './useAuth'
 
 function App() {
   // Keep this call: with VITE_DEMO_EMAIL/VITE_DEMO_PASSWORD set (frontend/.env) it signs
   // in as the seeded demo account on load, so per-user features need no login screen.
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
   const [status, setStatus] = useState('checking...')
 
   useEffect(() => {
@@ -15,11 +18,18 @@ function App() {
   }, [])
 
   return (
-    <main style={{ padding: '2rem' }}>
-      <h1>Shellhacks Starter</h1>
-      <p>Backend status: {status}</p>
-      {user && <p>Signed in as {user.email}</p>}
-    </main>
+    <Layout title="Shellhacks Starter" tagline="Replace this with your project" user={user}>
+      <p className="muted">Backend status: {status}</p>
+      {loading ? (
+        <Loading />
+      ) : user ? (
+        <ItemsPanel />
+      ) : (
+        <EmptyState title="Not signed in">
+          Set VITE_DEMO_EMAIL and VITE_DEMO_PASSWORD in frontend/.env for the demo auto-login, or render AuthForm.
+        </EmptyState>
+      )}
+    </Layout>
   )
 }
 

@@ -222,6 +222,45 @@ check("ai status reports configured flag", test_ai_status)
 check("ai ask requires auth", test_ai_ask_requires_auth)
 check("ai ask works, or says clearly it's not configured", test_ai_ask_path)
 
+
+# EXAMPLE feature (items.py) — every check acts as this run's own throwaway user and
+# deletes what it created, so it's safe against the deployed backend too.
+auth_headers = {}
+item = {}
+
+
+def test_items_require_auth():
+    request("GET", "/api/items", expect=401)
+    request("POST", "/api/items", {"title": "x"}, expect=401)
+
+
+def test_item_create_and_list():
+    auth_headers["value"] = {"Authorization": f"Bearer {token['value']}"}
+    created = request("POST", "/api/items", {"title": "Smoke item", "notes": "made by smoke_test"}, headers=auth_headers["value"])
+    assert created["title"] == "Smoke item" and isinstance(created["tags"], list), created
+    assert isinstance(created["fallback"], bool), created
+    item["id"] = created["id"]
+    listed = request("GET", "/api/items", headers=auth_headers["value"])
+    assert any(it["id"] == item["id"] for it in listed), "created item missing from list"
+
+
+def test_item_validation():
+    request("POST", "/api/items", {"title": ""}, headers=auth_headers["value"], expect=422)
+    request("POST", "/api/items", {"title": "x" * 121}, headers=auth_headers["value"], expect=422)
+
+
+def test_item_delete_and_owner_only():
+    request("DELETE", f"/api/items/{item['id']}", headers=auth_headers["value"])
+    request("DELETE", f"/api/items/{item['id']}", headers=auth_headers["value"], expect=404)
+    listed = request("GET", "/api/items", headers=auth_headers["value"])
+    assert not any(it["id"] == item["id"] for it in listed), "deleted item still listed"
+
+
+check("items require auth", test_items_require_auth)
+check("item create + list roundtrip", test_item_create_and_list)
+check("item validation rejects empty and oversized titles", test_item_validation)
+check("item delete works and is owner-only", test_item_delete_and_owner_only)
+
 if failures:
     print(f"\n{len(failures)} check(s) failed: {', '.join(failures)}")
     sys.exit(1)
