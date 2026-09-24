@@ -3,23 +3,18 @@
 You're a great engineer and this team is lucky to have you on this build — let's ship something judges remember.
 
 ## Idea
-[One paragraph: what it does, who it's for, why it's interesting to a judge in 30 seconds.]
+[One paragraph: what it does, who it's for, why it's interesting to a judge in 30 seconds. Run /spec to fill this in properly.]
 
 ## Sponsor / company challenges to target
-[Fill in from the event's sponsor challenge list at kickoff — name, sponsor, and their actual eligibility requirement. Leave empty entries out; don't force a fit for a challenge that doesn't naturally match the idea.]
-- [ ]
+[From the event's sponsor list at kickoff — name, sponsor, their actual eligibility requirement. Leave out ones that don't naturally fit.]
 - [ ]
 
 ## Stack
-- Frontend: [e.g. React + Vite]
-- Backend: [e.g. Node/Express, FastAPI]
-- Database: [e.g. SQLite, Postgres, Supabase]
-- Deploy target: [e.g. Vercel + Railway]
-- APIs/keys needed: [list them — fill in .env.example too]
+FastAPI + SQLite (backend), React + Vite (frontend), Render + Vercel (deploy) — change only if the idea truly needs something else.
+- APIs/keys needed: [list them, and add each to the matching .env.example]
 
 ## Scope (hackathon-realistic)
 Must have (demo breaks without these):
-- [ ]
 - [ ]
 
 Nice to have (cut first if time runs out):
@@ -28,22 +23,42 @@ Nice to have (cut first if time runs out):
 Explicitly NOT doing:
 - [ ]
 
+## Commands
+Run shell commands with the Bash tool (Git Bash), not PowerShell — everything here is bash syntax and the permission allowlist is written for Bash.
+- Start both servers (PowerShell, repo root): `.\dev.ps1` — backend auto-reloads on save
+- Backend alone: `cd backend && venv/Scripts/python -m uvicorn main:app --reload --port 8000`
+- Frontend alone: `cd frontend && npm run dev` (http://localhost:5173)
+- Verify everything: `bash scripts/check.sh` (or `/check`) — lint, build, live backend smoke test
+- Check the deployed backend: `SMOKE_BASE_URL=<render-url> backend/venv/Scripts/python backend/smoke_test.py`
+
+## How this codebase is wired — follow these patterns
+- All frontend→backend calls go through `frontend/src/api.js` (`api`, `login`, `signup`, `uploadFile`, `assetUrl`). Don't call `fetch` directly.
+- New backend feature = new router module shaped like `backend/uploads.py`, then `app.include_router(...)` in `main.py`. Protect routes with `Depends(get_current_user)` from `auth.py`. Rate-limit public POSTs with `@limiter.limit("N/minute")` (the handler needs a `request: Request` param).
+- Tables go in `backend/models.py` and are created on startup.
+- Every new endpoint gets a check in `backend/smoke_test.py`, so `/check` keeps covering the whole app.
+
 ## Standards (keep these on by default, don't ask each time)
 - Secrets stay in `.env`, never hardcoded or committed
-- Validate/sanitize any file upload (type + size check) and any user input hitting the database
-- Auth: use a library (FastAPI OAuth2/passlib, Clerk, Auth0) — don't hand-roll password storage
-- Forms: every input has a `<label>`, every image has `alt` text
-- Basic rate limit on public POST endpoints
+- Validate any upload by its actual bytes (see `uploads.py`) and any user input hitting the database
+- Auth: use the existing `auth.py`; never hand-roll password storage
+- Every input has a `<label>`, every image has `alt` text
+- Rate limit public POST endpoints
 
 ## Workflow
-- When planning the idea (or interviewing me about it), check it against the "Sponsor / company challenges to target" list and point out which ones it could realistically qualify for, and what small additions (an API, a specific integration) would make it eligible for another one — without forcing scope onto an idea that doesn't naturally fit.
-- For anything touching more than one file: plan briefly before coding. For a one-line fix, just do it.
-- Don't claim a feature is done without evidence: show the test/curl output, or a screenshot. If it can't be verified, say so instead of asserting it works.
-- If you've corrected the same mistake twice, stop repeating — run `/clear` and restate the task with what you learned, instead of continuing to patch a polluted context.
-- Before calling a nontrivial feature done, use a subagent to review the diff with fresh eyes against what it's supposed to do. Don't use subagents for routine building — they start with no memory of this file or the conversation, so they cost more than they help unless the point is a fresh, unbiased look.
+- For a new idea or big feature: `/spec` first. For anything touching more than one file: plan briefly. For a one-line fix, just do it.
+- When planning, point out which sponsor challenges the idea realistically qualifies for and the smallest addition that would qualify it for another — never force a fit.
+- Don't claim a feature is done without evidence: run `/check` and show the result. If something can't be verified, say so.
+- Before calling a nontrivial feature done, have the `reviewer` agent check the diff with fresh eyes. Don't use subagents for routine building — they start with no memory of the conversation.
+- If you've corrected the same mistake twice, stop — `/clear` and restate the task with what you learned.
+- Photos: as the last step of a turn where pages got finished and `/check` passed, run the `images` skill — place your best picks, then ask me once to confirm or swap. Never mid-feature, and never block on my answer.
+
+## Gotchas
+- SQLite `create_all` never alters existing tables: after changing a model's columns, stop the backend and delete `backend/app.db` (dev data is disposable).
+- Uploaded files are served at `/uploads/<name>`; in the frontend wrap them with `assetUrl()`, never hardcode a host.
+- Frontend env vars must start with `VITE_`; changing `.env` needs a dev-server restart.
+- Windows venv python is `venv/Scripts/python`, not `venv/bin/python`.
+- Render free tier wipes the disk on redeploy/restart — SQLite data and uploads don't survive. Fine for a demo.
+- [add project-specific gotchas here as you hit them]
 
 ## Current status
-[Update this as you go — what's working, what's broken, what you're mid-way through.]
-
-## Known issues / gotchas
-[Anything Claude should know before touching the code — flaky endpoint, env var quirks, etc.]
+[Update as you go — what's working, what's broken, what you're mid-way through.]

@@ -3,11 +3,14 @@ Quick pass/fail check against a running backend (default http://localhost:8000).
 Run this after starting the server to confirm health, auth, and upload
 validation all actually work — don't just eyeball it.
 
-Usage: venv/Scripts/python smoke_test.py
+Usage:
+  venv/Scripts/python smoke_test.py
+  SMOKE_BASE_URL=https://yourapp.onrender.com venv/Scripts/python smoke_test.py   # check the deployed backend
 """
 
 import base64
 import json
+import os
 import sys
 import urllib.error
 import urllib.request
@@ -18,7 +21,7 @@ TINY_PNG = base64.b64decode(
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
 )
 
-BASE = "http://localhost:8000"
+BASE = os.getenv("SMOKE_BASE_URL", "http://localhost:8000").rstrip("/")
 failures = []
 
 

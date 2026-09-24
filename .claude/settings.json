@@ -1,0 +1,50 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash scripts/check.sh)",
+      "Bash(node scripts/unsplash.mjs *)",
+      "Bash(npm run *)",
+      "Bash(npm install)",
+      "Bash(npm ci)",
+      "Bash(npx oxlint *)",
+      "Bash(npx playwright *)",
+      "Bash(python -m venv venv)",
+      "Bash(venv/Scripts/python *)",
+      "Bash(venv/Scripts/pip install -r requirements.txt)",
+      "Bash(backend/venv/Scripts/python *)",
+      "Bash(venv/bin/python *)",
+      "Bash(venv/bin/pip install -r requirements.txt)",
+      "Bash(backend/venv/bin/python *)",
+      "Bash(curl -s http://localhost*)",
+      "Bash(curl http://localhost*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git branch*)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(cd *)"
+    ],
+    "deny": [
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git reset --hard*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/lint-edited.mjs\"",
+            "timeout": 30,
+            "statusMessage": "Checking edited file"
+          }
+        ]
+      }
+    ]
+  }
+}
