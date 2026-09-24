@@ -3,7 +3,7 @@
 **ShellHacks 2026: Sept 25–27, FIU Graham Center (Modesto Maidique Campus), 36 hours of hacking.** Judging criteria, equally weighted: Completion, Originality, Design, Technology, Practicality. Submission is on Devpost with your GitHub repo attached — check the Hacker Guide / Discord on day 1 for the exact deadline and whether a video is required. Everything runs on the laptop; git push is the backup.
 
 ## Before the event (tonight, in this order — then sleep)
-- [ ] **Pick your idea.** Two candidates, one sentence each, plus the one moment that makes a judge react. Decide. The sponsor list at kickoff only adjusts it.
+- [ ] **Pick your idea.** Two candidates, one sentence each, plus the one moment that makes a judge react. Score each 1–5 on: (1) a judge recognizes the problem from one sentence, (2) the wow moment is something a judge *watches happen*, not something you explain, (3) the walking skeleton — the exact demo path, ugly — is buildable in 10 hours with this stack, (4) there's one genuinely technical piece doing real work (AI, vision, real-time, data), (5) it fits a sponsor track without forcing it. Pick the higher total; a tie goes to (3). Decide tonight — the sponsor list at kickoff only adjusts it.
 - [ ] Put the starter on GitHub: `gh auth login`, then `gh repo create shellhacks-starter --public --source . --push`
 - [ ] On github.com → the repo → Settings → tick **Template repository**
 - [ ] Dry-run the kickoff command so it's not new on the day: in `C:\dev`, `gh repo create kickoff-test --public --clone --template <your-github-user>/shellhacks-starter`, confirm `backend\.env` and `app.db` are NOT in it, then delete the test repo (`gh repo delete kickoff-test --yes`) and the folder

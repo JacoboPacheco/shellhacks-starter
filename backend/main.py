@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+from sqlalchemy import text
 
 load_dotenv()
 
@@ -65,4 +66,10 @@ app.mount("/uploads", StaticFiles(directory=uploads.UPLOAD_DIR), name="uploads")
 
 @app.get("/api/health")
 def health():
+    # touches the database so a deploy with a broken DB doesn't report green
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+    except Exception as e:  # noqa: BLE001 — any DB failure should surface here
+        return JSONResponse({"status": "db-error", "detail": str(e)[:200]}, status_code=503)
     return {"status": "ok"}
