@@ -4,6 +4,12 @@
 const BASE = import.meta.env.VITE_API_URL || ''
 const TOKEN_KEY = 'token'
 
+// In a production build there is no dev-server proxy, so an empty BASE means
+// every request would 404 on Vercel itself. Fail loudly instead of "backend unreachable".
+if (import.meta.env.PROD && !BASE) {
+  console.error('VITE_API_URL is not set. Add it in Vercel → Project → Settings → Environment Variables (your Render URL, no trailing slash) and redeploy.')
+}
+
 export const getToken = () => localStorage.getItem(TOKEN_KEY)
 export const setToken = (token) => localStorage.setItem(TOKEN_KEY, token)
 export const clearToken = () => localStorage.removeItem(TOKEN_KEY)
@@ -12,6 +18,9 @@ export const clearToken = () => localStorage.removeItem(TOKEN_KEY)
 export const assetUrl = (path) => `${BASE}${path}`
 
 export async function api(path, { method = 'GET', body, form } = {}) {
+  if (import.meta.env.PROD && !BASE) {
+    throw new Error('VITE_API_URL is not set on the frontend host — set it to the backend URL and redeploy')
+  }
   const headers = {}
   const token = getToken()
   if (token) headers.Authorization = `Bearer ${token}`

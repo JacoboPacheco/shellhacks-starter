@@ -56,6 +56,8 @@ Run shell commands with the Bash tool (Git Bash), not PowerShell — everything 
 - Before calling a nontrivial feature done: `/check`, then the `reviewer` agent on the uncommitted diff, fix what it finds, **then** commit. (Review before commit — after a commit the diff is empty.) Don't use subagents for routine building; they start with no memory of the conversation.
 - Commit after each feature that works (small commits, message says what now works). The commit history is our evidence the project was built during the event — never batch a whole day into one commit. Remind me to push every few hours.
 - If you've corrected the same mistake twice, stop — `/clear` and restate the task with what you learned.
+- When something's broken, use `/debug`: reproduce and read the actual error (server log, browser console) before changing code.
+- When compacting context, preserve: the feature in progress and its acceptance check, what's working vs broken, the files changed since the last commit, and any command that failed and why.
 - Photos: as the last step of a turn where pages got finished and `/check` passed, run the `images` skill — place your best picks, then ask me once to confirm or swap. Never mid-feature, and never block on my answer.
 
 ## Gotchas

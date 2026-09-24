@@ -13,4 +13,5 @@ Write the pitch for what exists, not what was planned. Extra notes from the user
    - **Disclosure line** (rules require it): "Auth, upload, deploy, and CI scaffolding came from a starter template I built before the event; the [project name] itself and all its features were built during ShellHacks." Adapt the wording to what's true.
    - **Judge Q&A:** 5 likely questions with one-sentence answers (e.g. "what happens with bad input?", "how would this scale?", "what did the AI tools do vs. you?"). Answer the AI one honestly.
 3. Keep it tight: the whole file under 120 lines. The user will read it out loud, so short sentences.
+   Also rewrite the top of `README.md` for the project (judges click the repo link): name, one-paragraph description, the live URL, a screenshot placeholder, how to run it locally, and the disclosure line. Move the starter-kit notes below it under "Development".
 4. Tell the user to time themselves reading the script once — if it's over 2 minutes, cut the "what's next" section first.

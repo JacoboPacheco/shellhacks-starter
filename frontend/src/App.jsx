@@ -7,7 +7,7 @@ function App() {
   useEffect(() => {
     api('/api/health')
       .then((data) => setStatus(data.status))
-      .catch(() => setStatus('backend unreachable'))
+      .catch((err) => setStatus(`backend unreachable — ${err.message}`))
   }, [])
 
   return (
