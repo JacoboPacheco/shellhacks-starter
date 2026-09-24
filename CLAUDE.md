@@ -25,7 +25,7 @@ Explicitly NOT doing:
 
 ## Commands
 Run shell commands with the Bash tool (Git Bash), not PowerShell — everything here is bash syntax and the permission allowlist is written for Bash.
-- Verify everything: `bash scripts/check.sh` (or `/check`) — lint, build, live backend smoke test. Self-contained (own server on :8765), so this is how you test; you don't need the dev servers running.
+- Verify everything: `bash scripts/check.sh` (or `/check`) — lint, build, live backend smoke test, then a headless-browser check of the built app (renders, no crash, no console errors, every image has alt / every input has a label, fits a 375px phone). It saves `.claude/tmp/e2e.png` — look at it with the Read tool after a `/check`. Self-contained (own servers on :8765 and :4173), so this is how you test; you don't need the dev servers running.
 - The dev servers are the human's: they run `.\dev.ps1` and keep them up. If you must start one yourself, run it in the background (`run_in_background`) — a foreground `uvicorn`/`npm run dev` blocks the Bash tool until it times out.
   - Backend: `cd backend && venv/Scripts/python -m uvicorn main:app --reload --port 8000`
   - Frontend: `cd frontend && npm run dev` (http://localhost:5173, proxies `/api` and `/uploads` to :8000)
@@ -50,7 +50,7 @@ Run shell commands with the Bash tool (Git Bash), not PowerShell — everything 
 - Secrets stay in `.env`, never hardcoded or committed
 - Validate any upload by its actual bytes (see `uploads.py`) and any user input hitting the database
 - Auth: use the existing `auth.py`; never hand-roll password storage
-- Every input has a `<label>`, every image has `alt` text
+- Every input has a `<label>`, every image has `alt` text — `/check` fails otherwise, and so does a page wider than a phone
 - Rate limit public POST endpoints
 
 ## How to read me

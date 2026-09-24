@@ -8,6 +8,7 @@ __pycache__/
 server.log
 frontend.log
 check-server.log
+check-preview.log
 backend/uploads/
 .claude/tmp/
 .claude/settings.local.json

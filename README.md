@@ -43,7 +43,7 @@ Demo account and demo data (recreate any time, locally or on Render): `backend\v
 .\check.ps1
 ```
 
-(From Git Bash or inside Claude Code: `bash scripts/check.sh` — same thing.) Lints and builds the frontend, starts a throwaway backend, and runs the smoke test (health, signup, auth, validation, uploads, AI status/auth). Prints `ALL CHECKS PASSED` or names what failed. CI runs the same script on every push.
+(From Git Bash or inside Claude Code: `bash scripts/check.sh` — same thing.) Lints and builds the frontend, starts a throwaway backend, runs the smoke test (health, signup, auth, validation, uploads, AI status/auth), then opens the built app in headless Chromium and checks it rendered, didn't crash, logged no errors, has alt text and labels everywhere, and fits a phone screen (needs `pip install playwright` + `playwright install chromium`; skipped otherwise). Prints `ALL CHECKS PASSED` or names what failed, and saves a screenshot to `.claude/tmp/e2e.png`. CI runs the same script on every push.
 
 ## What's in `.claude/` (Claude Code picks this up automatically)
 

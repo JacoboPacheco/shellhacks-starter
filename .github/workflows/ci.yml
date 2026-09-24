@@ -23,5 +23,6 @@ jobs:
         working-directory: frontend
       - run: pip install -r requirements.txt
         working-directory: backend
+      - run: pip install playwright && playwright install --with-deps chromium
       # same script you and Claude Code run locally — one definition of "working"
       - run: bash scripts/check.sh
