@@ -1,21 +1,20 @@
 import { useEffect, useState } from 'react'
-import './App.css'
+import { api } from './api'
 
 function App() {
   const [status, setStatus] = useState('checking...')
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL || ''}/api/health`)
-      .then((res) => res.json())
+    api('/api/health')
       .then((data) => setStatus(data.status))
       .catch(() => setStatus('backend unreachable'))
   }, [])
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
+    <main style={{ padding: '2rem' }}>
       <h1>Shellhacks Starter</h1>
       <p>Backend status: {status}</p>
-    </div>
+    </main>
   )
 }
 
