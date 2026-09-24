@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: Fresh-eyes reviewer for a finished feature. Use before calling a nontrivial feature done — give it the feature name and what it is supposed to do. It reads the diff, not the conversation that produced it.
+description: Fresh-eyes reviewer for an uncommitted diff that touches auth, data, or security. Give it the feature name and what it is supposed to do. It reads the diff, not the conversation that produced it.
 tools: Read, Grep, Glob, Bash
 ---
 

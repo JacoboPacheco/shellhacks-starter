@@ -8,7 +8,8 @@
 - [ ] On github.com → the repo → Settings → tick **Template repository**
 - [ ] Dry-run the kickoff command so it's not new on the day: in `C:\dev`, `gh repo create kickoff-test --public --clone --template <your-github-user>/shellhacks-starter`, confirm `backend\.env` and `app.db` are NOT in it, then delete the test repo (`gh repo delete kickoff-test --yes`) and the folder
 - [ ] Free API keys, saved where you can paste from: Gemini (aistudio.google.com/apikey — `llm.py` is wired for it; the default model is a Flash-Lite because that's the one with a usable free quota, confirm at aistudio.google.com/rate-limit), Unsplash (photos). A sponsor track you care about with an API → that key too
-- [ ] `pip install playwright` then `playwright install chromium` (once, ~300MB) — Claude's `webapp-testing` skill drives a real browser with it, and `/pitch` uses it for screenshots
+- [ ] `python -m pip install playwright` then `playwright install chromium` (once, ~300MB; `python -m pip` so it lands in the same `python` that `check.sh` calls) — `.\check.ps1`'s browser check silently skips without it, and Claude's `webapp-testing` skill and `/pitch` screenshots use it too
+- [ ] Photos: copy the repo-root `.env.example` to `.env` and paste `UNSPLASH_ACCESS_KEY`; Gemini goes in `backend\.env`
 - [ ] 15 minutes: learn to open the browser console (F12 → Console and Network tabs) and paste the red text to Claude. This is the one skill that unblocks a stuck AI on a frontend bug.
 - [ ] 60-minute timed mini-build from the template: `/spec` a throwaway idea, build one feature end to end (table → endpoint → page), `/check`, commit. This tests your loop, not the code. Write down where you got stuck.
 - [ ] Practice deploy per DEPLOY.md, timeboxed to 45 minutes. If Render/Vercel fight you, stop and do it at hour 4 of the event instead. Delete the practice services afterwards (DEPLOY.md top note).
@@ -21,7 +22,7 @@
   The project gets its own GitHub repo with event-time history only, and a "generated from" badge that discloses the template.
 - [ ] Paste the sponsor challenge list (from the opening ceremony / event site) into CLAUDE.md under "Sponsor / company challenges" — `/spec` reads it from there
 - [ ] Do the one-time setup in README.md (venv, `pip install`, `npm install`, `backend\.env` with a new `JWT_SECRET` and your `GEMINI_API_KEY`)
-- [ ] `.\check.ps1` → must say `ALL CHECKS PASSED` before you write a single feature
+- [ ] `.\check.ps1` → must say `ALL CHECKS PASSED` before you write a single feature — and the "browser check" section must not say "skipped" (that means Playwright is missing)
 - [ ] Start Claude Code in the repo and **accept the "trust this folder" prompt** — until you do, the permission allowlist and hooks in `.claude/settings.json` are silently ignored. Also accept the prompt to install the repo's plugins (`frontend-design`, `example-skills`). If no prompt appears, `/plugin` and check they're listed.
 - [ ] `/model` → pick the bigger model for the spec; run `/spec <your idea in a sentence>`, answer its questions — it writes SPEC.md, fills in CLAUDE.md, and commits "Start ShellHacks project". Timebox: 20 minutes; you already chose the idea.
 - [ ] `/clear`, `/model` → Sonnet, then "build from SPEC.md, walking skeleton first"

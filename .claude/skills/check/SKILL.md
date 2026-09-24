@@ -1,6 +1,6 @@
 ---
 name: check
-description: Run every project check (frontend lint + build, backend smoke test against a live server) and report pass/fail with evidence. Use before calling any feature done, and whenever the user asks if things work.
+description: Run every project check (frontend lint + build, backend smoke test against a live server, headless-browser check of the built app) and report pass/fail with evidence. Use before calling any feature done, and whenever the user asks if things work.
 ---
 
 Run from the repo root:

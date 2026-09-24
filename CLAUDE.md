@@ -68,26 +68,22 @@ I talk loosely on purpose ("make it pop", "add a thing where people can save stu
 ## Workflow
 - `/spec` is for the initial idea only (the user types it). For a mid-event feature: plan in one paragraph — table, endpoints, where it appears in the UI, acceptance check — append it to SPEC.md, build. For a one-line fix, just do it.
 - Build order: the walking skeleton first — the ugliest version of the exact demo path working end to end — then iterate on it. Never breadth-first.
-- Judging (ShellHacks): Completion, Originality, Design, Technology, Practicality, weighted equally, and judges grade what they see work — not code quality, not the pitch. When planning or cutting scope, protect Completion first: a small thing that fully works beats a big thing that half-works.
+- Judges grade what they see work (Completion, Originality, Design, Technology, Practicality — equal weight; details in the `spec` skill). When planning or cutting scope, protect Completion first: a small thing that fully works beats a big thing that half-works.
 - When planning, point out which sponsor challenges the idea realistically qualifies for and the smallest addition that would qualify it for another — never force a fit, and say plainly when a sponsor use would be thin. If I ask for a sponsor by name: fetch its current API docs first (never build from memory), then ask one AskUserQuestion with 2–3 places it would do real work in the demo (recommendation first, with a wireframe of where it appears) and wait; then build it behind an env var with a graceful "not configured" state, add the key name to `.env.example`, and ask me for the key once, at the end.
 - When I mention time left, judging, or the demo being soon: stop new features. Run `/check` and `git status -sb`, then give me exactly one next action in this priority: broken → unpushed → undeployed (a Deployed URL is blank, or `smoke_test.py <render-url>` fails) → pitch. If the action is pitch, it is: type `/pitch`, then `/ship-check` (you can't run those; pitch first because it rewrites the README that ship-check verifies).
 - Don't claim a feature is done without evidence: run `/check` and show the result; if something can't be verified, say so. Then commit. For changes that touch auth, data, or security, run the `reviewer` agent on the uncommitted diff first and fix what it finds (review before commit — after a commit the diff is empty). Everything else: `/check` + commit. Don't use subagents for routine building; they start with no memory of the conversation.
 - Commit after each feature that works (small commits, message says what now works). The commit history is our evidence the project was built during the event — never batch a whole day into one commit.
-- After every commit, rewrite `## Current status` below (working / broken / in progress + its acceptance check), and append anything I confirmed about how the app should look or behave to `## Decisions`. Those two sections are the only memory that survives compaction, `/clear`, or a crash.
+- After every commit, rewrite `## Current status` below (working / broken / in progress + its acceptance check), and append anything I confirmed about how the app should look or behave to `## Decisions`. Those two sections are the memory that survives compaction, `/clear`, or a crash.
 - If you changed `backend/models.py`, end the turn (before any photo question) with: "Delete `backend/app.db` and restart the backend" — `/check` uses a fresh database, so it passes while the dev server's old file 500s with "no such column".
-- If you've corrected the same mistake twice, stop — `/clear` and restate the task with what you learned.
-- When something's broken, use `/debug`.
+- If you've corrected the same mistake twice, stop: say so and ask me to `/clear`, then restate the task with what you learned.
 - When compacting context, preserve: the feature in progress and its acceptance check, what's working vs broken, the files changed since the last commit, and any command that failed and why.
-- Photos: as the last step of a turn where pages got finished and `/check` passed, run the `images` skill — place your best picks, then ask me once to confirm or swap. Never mid-feature, never in the same turn a design direction was just applied, and never block on my answer.
 
 ## Budget
 Prompts may arrive with "Budget right now: …" (5-hour and weekly usage, from a hook). Don't change how you work because of it — just don't let me get surprised: when the 5-hour limit passes 85%, or the weekly passes 70%, say so once, with the reset time, before starting the turn's work; and if a limit is about to be hit mid-feature, commit and push what's safe first. Model choice is mine (`/model`): I build on Sonnet and switch up for `/spec`, hard debugging, and final review — if a problem has beaten Sonnet twice, say "this one's worth switching models for".
 
 ## Gotchas
-- SQLite `create_all` never alters existing tables — see the `models.py` rule in Workflow.
 - Uploaded files are served at `/uploads/<name>`; in the frontend wrap them with `assetUrl()`, never hardcode a host.
 - Frontend env vars must start with `VITE_`; changing `.env` needs a dev-server restart.
-- Windows venv python is `venv/Scripts/python`, not `venv/bin/python`.
 - A page showing "Something broke" is the ErrorBoundary catching a component crash — the text under it is the real error message; the full stack is in the browser console.
 - Render free tier wipes the disk on every deploy and restart — SQLite data and uploads don't survive. After a deploy, "Incorrect email or password" on a known-good account means the account was wiped: run `seed.py <render-url>`.
 - Everyone at the venue shares one public IP, so per-IP rate limits are effectively per-venue. Keep limits ≥ 30/minute.

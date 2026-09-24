@@ -67,6 +67,8 @@ done
 
 if [ "$up" -eq 1 ]; then
   (cd "$ROOT/backend" && SMOKE_BASE_URL="http://localhost:$PORT" "$PY" smoke_test.py) || failed+=("backend smoke test")
+  # the built app may auto-login as the demo account (VITE_DEMO_EMAIL); make it exist
+  (cd "$ROOT/backend" && "$PY" seed.py "http://localhost:$PORT" >/dev/null) || failed+=("seed demo account")
 else
   echo "backend never came up — last server output:"
   tail -20 "$ROOT/backend/check-server.log"

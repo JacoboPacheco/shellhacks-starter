@@ -23,7 +23,7 @@ Write-Host "Then, in the new window, run:" -ForegroundColor Yellow
 Write-Host "  irm https://claude.ai/install.ps1 | iex        # installs Claude Code"
 Write-Host "  git --version; gh --version; node --version; python --version; claude --version"
 Write-Host "  gh auth login   # sign in to GitHub in the browser"
-Write-Host "  pip install playwright; playwright install chromium   # lets Claude's webapp-testing skill drive a browser (~300MB)"
+Write-Host "  python -m pip install playwright; playwright install chromium   # browser check in check.ps1 + Claude's webapp-testing skill (~300MB)"
 Write-Host "  claude          # first run: pick your Claude subscription login and sign in in the browser"
 Write-Host "  (the repo's .claude/settings.json installs the frontend-design and example-skills plugins when you first open it)"
 Write-Host ""
