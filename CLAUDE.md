@@ -59,6 +59,7 @@ Run shell commands with the Bash tool (Git Bash), not PowerShell — everything 
 - Uploaded files are served at `/uploads/<name>`; in the frontend wrap them with `assetUrl()`, never hardcode a host.
 - Frontend env vars must start with `VITE_`; changing `.env` needs a dev-server restart.
 - Windows venv python is `venv/Scripts/python`, not `venv/bin/python`.
+- A page showing "Something broke" is the ErrorBoundary catching a component crash — the text under it is the real error message; the full stack is in the browser console.
 - Render free tier wipes the disk on redeploy/restart — SQLite data and uploads don't survive. Fine for a demo.
 - [add project-specific gotchas here as you hit them]
 

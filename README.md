@@ -46,8 +46,10 @@ Opens the backend (auto-reloads when files change) and frontend in two windows. 
 | `/check` | Runs `scripts/check.sh` and reports with evidence |
 | `images` skill | When a page is done, Claude finds its photo spots, looks at Unsplash options, places its best picks with credit, then asks you once to confirm or swap. Also runs on `/images` |
 | `/ship-check` | Pre-demo readiness check, including the ShellHacks disclosure rule |
+| `/pitch` | Drafts the 2-minute demo script, Devpost writeup, disclosure line, and judge Q&A from what actually got built |
 | `reviewer` agent | Fresh-eyes review of a finished feature's diff |
 | Edit hook | After every edit, lint-checks JS/JSX and syntax-checks Python so broken code is caught immediately |
+| Push reminder | When Claude finishes a turn with 4+ unpushed commits, it says so — pushes are your timestamped proof of event-time work and your backup |
 | Permissions | Routine commands (npm scripts, checks, git status/diff/commit) run without asking; `git push --force` and `git reset --hard` are denied; any other push still asks |
 
 ## More
