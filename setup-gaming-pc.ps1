@@ -23,6 +23,7 @@ Write-Host "Then, in the new window, run:" -ForegroundColor Yellow
 Write-Host "  irm https://claude.ai/install.ps1 | iex        # installs Claude Code"
 Write-Host "  git --version; node --version; python --version; claude --version"
 Write-Host "  claude        # first run: pick your Claude subscription login and sign in in the browser"
+Write-Host "  (the repo's .claude/settings.json installs the frontend-design and example-skills plugins when you first open it)"
 Write-Host ""
 Write-Host "Then open Tailscale from the Start menu and sign in with the SAME account you used on the laptop." -ForegroundColor Yellow
 Write-Host ""

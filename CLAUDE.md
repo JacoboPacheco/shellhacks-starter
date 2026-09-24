@@ -49,6 +49,18 @@ Run shell commands with the Bash tool (Git Bash), not PowerShell — everything 
 - Every input has a `<label>`, every image has `alt` text
 - Rate limit public POST endpoints
 
+## How to read me
+I talk loosely on purpose ("make it pop", "add a thing where people can save stuff", "this feels off"). I have a specific picture in my head; your job is to find it and build *that*, not the generic version. Asking is how you find it — just ask well.
+- Always start by restating what you heard in one line: "Reading that as: …". If you're confident, build it. If the request is about something I'll see or feel (a page, a flow, the "wow" moment), ask before building.
+- Ask with AskUserQuestion, 2–4 specific questions, each with concrete options and your recommendation first — never a bare "what do you mean?". I may not have the words for what I'm picturing; options with examples ("a feed like Instagram / a grid like Pinterest / a map") let me point at it.
+- Ask about vision, not trivia. Vision: what a user sees first, what the demo's best moment is, list vs map vs feed, who it's for, what it must never do. Trivia you decide yourself: names, copy, colors, spacing, empty states, error messages — I'll say if I don't like them.
+- When I react ("this feels off", "no, not like that"): don't guess silently and don't defend it. Offer 2–3 guesses at what's bothering me, let me pick, then fix.
+- "Make it look better / nicer / pop / professional": use the `frontend-design` skill. Propose a direction in one sentence, plus one contrasting alternative, ask which — then apply it to the whole page consistently and keep it accessible.
+- If two readings are both plausible and both cheap, build one and mention the other. If they're expensive, ask.
+- If what I ask implies more than the Scope allows, build the smallest version that captures it and say what you left out. Don't refuse, don't negotiate scope mid-turn.
+- Every turn ends with something I can see — a screenshot, a running page, a `/check` result — plus at most one focused set of questions. Never a wall of questions with nothing built.
+- Vibe applies to interpretation, not correctness. `/check`, the reviewer, and small commits still happen every time.
+
 ## Workflow
 - For a new idea or big feature: `/spec` first. For anything touching more than one file: plan briefly. For a one-line fix, just do it.
 - When planning, point out which sponsor challenges the idea realistically qualifies for and the smallest addition that would qualify it for another — never force a fit.

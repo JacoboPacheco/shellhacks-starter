@@ -52,6 +52,7 @@ Opens the backend (auto-reloads when files change) and frontend in two windows. 
 | Edit hook | After every edit, lint-checks JS/JSX and syntax-checks Python so broken code is caught immediately |
 | Push reminder | When Claude finishes a turn with 4+ unpushed commits, it says so — pushes are your timestamped proof of event-time work and your backup |
 | Permissions | Routine commands (npm scripts, checks, git status/diff/commit) run without asking; `git push --force` and `git reset --hard` are denied; any other push still asks |
+| Plugins | `frontend-design` (visual polish) and `example-skills` (incl. `webapp-testing`) are registered in `.claude/settings.json`, so a fresh machine installs them on first open |
 
 ## More
 

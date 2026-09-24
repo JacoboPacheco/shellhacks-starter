@@ -12,7 +12,7 @@
 - [ ] Paste the sponsor challenge list (from the opening ceremony / event site) into CLAUDE.md under "Sponsor / company challenges" — `/spec` reads it from there
 - [ ] Do the one-time setup in README.md (venv, `pip install`, `npm install`, `backend\.env` with a new `JWT_SECRET`)
 - [ ] `.\check.ps1` → must say `ALL CHECKS PASSED` before you write a single feature
-- [ ] Start Claude Code in the repo and **accept the "trust this folder" prompt** — until you do, the permission allowlist and hooks in `.claude/settings.json` are silently ignored
+- [ ] Start Claude Code in the repo and **accept the "trust this folder" prompt** — until you do, the permission allowlist and hooks in `.claude/settings.json` are silently ignored. Also accept the prompt to install the repo's plugins (`frontend-design`, `example-skills`) — they're registered in the same file, so a fresh machine gets them automatically. If no prompt appears, run `/plugin` and check they're listed; otherwise install them from there.
 - [ ] Run `/hooks` once to confirm the "Checking edited file" hook is listed
 - [ ] Run `/spec <your idea in a sentence>`, answer its questions — it writes SPEC.md, fills in CLAUDE.md, and commits "Start ShellHacks project"
 - [ ] `/clear`, then tell Claude Code to build from SPEC.md
