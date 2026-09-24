@@ -3,6 +3,8 @@
 Do this once, early (Day 1 practice), so kickoff-day deploy is just "repeat these steps."
 Order matters: backend first (Vercel needs its URL), then frontend, then close the loop.
 
+After the practice run, delete the practice services (Render: service → Settings → Delete; Vercel: project → Settings → Delete). Otherwise on kickoff day the Blueprint's service name `shellhacks-backend` is already taken and Vercel's project name collides — a confusing 10 minutes you don't need. (Or just rename the service in `render.yaml` to your project's name at kickoff.)
+
 ## 1. Backend → Render (about 5 clicks — `render.yaml` does the rest)
 
 1. Push this repo to GitHub.
