@@ -27,7 +27,7 @@ Optional, for `/images`: copy `.env.example` (repo root) to `.env` and add a fre
 .\dev.ps1
 ```
 
-Opens the backend (auto-reloads when files change) and frontend in two windows. Open http://localhost:5173 — it should show "Backend status: ok".
+Opens the backend (auto-reloads when files change) and frontend in two windows. Open http://localhost:5173 — it should show "Backend status: ok". Working on the gaming PC over Remote-SSH? Use two VS Code terminals instead — see [REMOTE.md](./REMOTE.md).
 
 ## Check that it actually works
 

@@ -16,4 +16,5 @@ Do not propose ideas of your own. Your job is to pressure-test theirs and turn i
    - What gets cut first if time runs short
 3. Write `SPEC.md`: problem (2 sentences), demo script (the exact clicks a judge sees), must-have features with an acceptance check for each, nice-to-haves in cut order, explicitly out of scope, sponsor challenges targeted and why, new endpoints and tables, and an end-to-end verification step.
 4. Update the Idea, Sponsor challenges, and Scope sections of CLAUDE.md to match. Keep them short — SPEC.md holds the detail.
-5. Tell the user to start a fresh session (`/clear`) to build from SPEC.md, so the build starts with clean context.
+5. Commit SPEC.md and CLAUDE.md with the message `Start ShellHacks project` — this is the line in the history between the pre-event template and event work.
+6. Tell the user to run `/clear` and then say "build from SPEC.md", so the build starts with clean context.

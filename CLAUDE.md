@@ -25,11 +25,15 @@ Explicitly NOT doing:
 
 ## Commands
 Run shell commands with the Bash tool (Git Bash), not PowerShell — everything here is bash syntax and the permission allowlist is written for Bash.
-- Start both servers (PowerShell, repo root): `.\dev.ps1` — backend auto-reloads on save
-- Backend alone: `cd backend && venv/Scripts/python -m uvicorn main:app --reload --port 8000`
-- Frontend alone: `cd frontend && npm run dev` (http://localhost:5173)
-- Verify everything: `bash scripts/check.sh` (or `/check`) — lint, build, live backend smoke test
+- Verify everything: `bash scripts/check.sh` (or `/check`) — lint, build, live backend smoke test. Self-contained (own server on :8765), so this is how you test; you don't need the dev servers running.
+- The dev servers are the human's: they run `.\dev.ps1` (or two VS Code terminals) and keep them up. If you must start one yourself, run it in the background (`run_in_background`) — a foreground `uvicorn`/`npm run dev` blocks the Bash tool until it times out.
+  - Backend: `cd backend && venv/Scripts/python -m uvicorn main:app --reload --port 8000`
+  - Frontend: `cd frontend && npm run dev` (http://localhost:5173, proxies `/api` and `/uploads` to :8000)
 - Check the deployed backend: `SMOKE_BASE_URL=<render-url> backend/venv/Scripts/python backend/smoke_test.py`
+
+## Deployed
+- Render (backend): [paste URL after deploying — DEPLOY.md section 1]
+- Vercel (frontend): [paste URL — DEPLOY.md section 2]
 
 ## How this codebase is wired — follow these patterns
 - All frontend→backend calls go through `frontend/src/api.js` (`api`, `login`, `signup`, `uploadFile`, `assetUrl`). Don't call `fetch` directly.
@@ -49,7 +53,7 @@ Run shell commands with the Bash tool (Git Bash), not PowerShell — everything 
 - For a new idea or big feature: `/spec` first. For anything touching more than one file: plan briefly. For a one-line fix, just do it.
 - When planning, point out which sponsor challenges the idea realistically qualifies for and the smallest addition that would qualify it for another — never force a fit.
 - Don't claim a feature is done without evidence: run `/check` and show the result. If something can't be verified, say so.
-- Before calling a nontrivial feature done, have the `reviewer` agent check the diff with fresh eyes. Don't use subagents for routine building — they start with no memory of the conversation.
+- Before calling a nontrivial feature done: `/check`, then the `reviewer` agent on the uncommitted diff, fix what it finds, **then** commit. (Review before commit — after a commit the diff is empty.) Don't use subagents for routine building; they start with no memory of the conversation.
 - Commit after each feature that works (small commits, message says what now works). The commit history is our evidence the project was built during the event — never batch a whole day into one commit. Remind me to push every few hours.
 - If you've corrected the same mistake twice, stop — `/clear` and restate the task with what you learned.
 - Photos: as the last step of a turn where pages got finished and `/check` passed, run the `images` skill — place your best picks, then ask me once to confirm or swap. Never mid-feature, and never block on my answer.

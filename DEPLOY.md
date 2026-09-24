@@ -7,8 +7,8 @@ Order matters: backend first (Vercel needs its URL), then frontend, then close t
 
 1. Push this repo to GitHub.
 2. render.com → New → **Blueprint** → connect the repo. Render reads `render.yaml` and shows one service, `shellhacks-backend`.
-3. It asks for `ALLOWED_ORIGINS` — put `http://localhost:5173` for now (you'll change it in step 3 below). `JWT_SECRET` is generated for you.
-4. Apply. Wait for the deploy to go green. Note the URL, e.g. `https://shellhacks-backend.onrender.com`.
+3. It asks for `ALLOWED_ORIGINS` — put `http://localhost:5173` for now (you'll change it in section 3). `JWT_SECRET` is generated for you.
+4. Apply. Wait for the deploy to go green. Copy the URL (e.g. `https://shellhacks-backend.onrender.com`) into CLAUDE.md under **Deployed**.
 5. Confirm: `https://<your-render-url>/api/health` shows `{"status":"ok"}`.
 
 ## 2. Frontend → Vercel
@@ -16,11 +16,11 @@ Order matters: backend first (Vercel needs its URL), then frontend, then close t
 1. vercel.com → New Project → import the same repo.
 2. Root directory: `frontend` (Vite is auto-detected; `frontend/vercel.json` handles page routing).
 3. Environment variable `VITE_API_URL` = your Render URL from above, **no trailing slash**.
-4. Deploy. Note the URL, e.g. `https://yourapp.vercel.app`.
+4. Deploy. Get the URL from **Project → Settings → Domains** (the stable `yourapp.vercel.app` one), not the "Visit" button — that often opens a per-deployment URL like `yourapp-abc123.vercel.app`, which won't match the CORS setting below. Copy it into CLAUDE.md under **Deployed**.
 
 ## 3. Close the loop
 
-Render → your service → Environment → set `ALLOWED_ORIGINS` to your Vercel URL (no trailing slash) → save, it redeploys. Then open the Vercel URL: "Backend status: ok" with no CORS errors in the browser console.
+Render → your service → Environment → set `ALLOWED_ORIGINS` to your Vercel URL (no trailing slash; several origins are comma-separated) → save, it redeploys. Then open the Vercel URL: "Backend status: ok" with no CORS errors in the browser console. If it says "backend unreachable", the origin doesn't match — compare the browser's address bar to `ALLOWED_ORIGINS` character by character (https, no trailing slash, the Domains URL not a deployment URL).
 
 Prove the deployed backend works, not just that it's up:
 
