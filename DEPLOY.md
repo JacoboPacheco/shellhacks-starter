@@ -17,7 +17,7 @@ After the practice run, delete the practice services (Render: service → Settin
 
 1. vercel.com → New Project → import the same repo.
 2. Root directory: `frontend` (Vite is auto-detected; `frontend/vercel.json` handles page routing).
-3. Environment variable `VITE_API_URL` = your Render URL from above, **no trailing slash**.
+3. Environment variable `VITE_API_URL` = your Render URL from above, **no trailing slash**. If the app uses the demo auto-login, also add `VITE_DEMO_EMAIL` and `VITE_DEMO_PASSWORD` (same values as `frontend/.env`), and remember the demo account must exist on the deployed backend: `seed.py <render-url>` after every deploy.
 4. Deploy. Get the URL from **Project → Settings → Domains** (the stable `yourapp.vercel.app` one), not the "Visit" button — that often opens a per-deployment URL like `yourapp-abc123.vercel.app`, which won't match the CORS setting below. Copy it into CLAUDE.md under **Deployed**.
 
 ## 3. Close the loop
