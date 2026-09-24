@@ -3,10 +3,22 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 load_dotenv()
 
+import auth
+import uploads
+from database import Base, engine
+from limiter import limiter
+
+Base.metadata.create_all(bind=engine)
+
 app = FastAPI()
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
 
@@ -16,6 +28,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(auth.router)
+app.include_router(uploads.router)
 
 
 @app.get("/api/health")

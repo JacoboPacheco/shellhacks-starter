@@ -6,3 +6,5 @@ __pycache__/
 .env
 *.db
 server.log
+frontend.log
+backend/uploads/
