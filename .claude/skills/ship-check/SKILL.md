@@ -8,7 +8,7 @@ Go through each item, actually run the command where there is one, and report a 
 
 1. `bash scripts/check.sh` passes locally.
 2. The deployed pair works together: take both URLs from CLAUDE.md → Deployed (ask if not filled in), then run `SMOKE_ORIGIN=<vercel-url> backend/venv/Scripts/python backend/smoke_test.py <render-url>` (or `venv/bin/python` on Mac/Linux). With SMOKE_ORIGIN set it also verifies CORS and that the deployed frontend was built with this backend's URL — the two most common "works locally, dead on Vercel" mistakes. A Render free-tier cold start can take 30s or more — a slow first request is not a failure. Then `backend/venv/Scripts/python backend/seed.py <render-url>` so the demo account exists on the deployed backend.
-3. The deployed frontend loads and shows the backend as reachable (check the Vercel URL in the browser if available; otherwise ask the user to).
+3. The deployed frontend actually works in a browser: `python frontend/e2e/smoke.py <vercel-url>` — renders, no crash, no console errors, alt text/labels, fits a phone — then look at `.claude/tmp/e2e.png`, which is now the live site. If Playwright isn't installed, open the Vercel URL in the browser tool instead.
 4. `git status` is clean and the latest commit is pushed (`git status -sb` shows no "ahead").
 5. README.md describes the actual project (what it is, how to run it) — not the starter template text.
 6. Rules disclosure: README.md (and the Devpost writeup) states that auth/upload/deploy scaffolding came from a starter template the user built before the event, and that the project itself was built during the hackathon. ShellHacks rules require documenting pre-existing and external code. If missing, draft the sentence and add it.
