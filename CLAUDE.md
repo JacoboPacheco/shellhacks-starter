@@ -30,6 +30,11 @@ Explicitly NOT doing:
 - Forms: every input has a `<label>`, every image has `alt` text
 - Basic rate limit on public POST endpoints
 
+## Workflow
+- For anything touching more than one file: plan briefly before coding. For a one-line fix, just do it.
+- Don't claim a feature is done without evidence: show the test/curl output, or a screenshot. If it can't be verified, say so instead of asserting it works.
+- If you've corrected the same mistake twice, stop repeating — run `/clear` and restate the task with what you learned, instead of continuing to patch a polluted context.
+
 ## Current status
 [Update this as you go — what's working, what's broken, what you're mid-way through.]
 
