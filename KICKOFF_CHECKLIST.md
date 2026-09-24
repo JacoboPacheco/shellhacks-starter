@@ -2,7 +2,8 @@
 
 ## First 15 minutes
 - [ ] Clone this repo fresh from GitHub (don't copy the folder — a copy drags along your real `.env` secret and test data from tonight's practice run)
-- [ ] Fill out CLAUDE.md: Idea, Stack (adjust if this idea needs something different), Scope
+- [ ] Note down the sponsor challenge list from the opening ceremony/event site before you forget it
+- [ ] Fill out CLAUDE.md: Idea, Sponsor/company challenges to target, Stack (adjust if this idea needs something different), Scope
 - [ ] `cd backend`
 - [ ] `python -m venv venv`
 - [ ] `venv\Scripts\pip install -r requirements.txt`

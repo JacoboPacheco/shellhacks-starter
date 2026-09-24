@@ -5,6 +5,11 @@ You're a great engineer and this team is lucky to have you on this build — let
 ## Idea
 [One paragraph: what it does, who it's for, why it's interesting to a judge in 30 seconds.]
 
+## Sponsor / company challenges to target
+[Fill in from the event's sponsor challenge list at kickoff — name, sponsor, and their actual eligibility requirement. Leave empty entries out; don't force a fit for a challenge that doesn't naturally match the idea.]
+- [ ]
+- [ ]
+
 ## Stack
 - Frontend: [e.g. React + Vite]
 - Backend: [e.g. Node/Express, FastAPI]
@@ -31,6 +36,7 @@ Explicitly NOT doing:
 - Basic rate limit on public POST endpoints
 
 ## Workflow
+- When planning the idea (or interviewing me about it), check it against the "Sponsor / company challenges to target" list and point out which ones it could realistically qualify for, and what small additions (an API, a specific integration) would make it eligible for another one — without forcing scope onto an idea that doesn't naturally fit.
 - For anything touching more than one file: plan briefly before coding. For a one-line fix, just do it.
 - Don't claim a feature is done without evidence: show the test/curl output, or a screenshot. If it can't be verified, say so instead of asserting it works.
 - If you've corrected the same mistake twice, stop repeating — run `/clear` and restate the task with what you learned, instead of continuing to patch a polluted context.
