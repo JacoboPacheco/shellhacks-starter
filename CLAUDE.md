@@ -10,7 +10,7 @@ You're a great engineer and this team is lucky to have you on this build — let
 - [ ]
 
 ## Stack
-FastAPI + SQLite (backend), React + Vite (frontend), Render + Vercel (deploy) — change only if the idea truly needs something else.
+FastAPI (backend; SQLite locally, Postgres on Render), React + Vite (frontend), Render + Vercel (deploy) — change only if the idea truly needs something else.
 - APIs/keys needed: [list them, and add each to the matching .env.example]
 
 ## Scope (hackathon-realistic)
@@ -30,7 +30,7 @@ Run shell commands with the Bash tool (Git Bash), not PowerShell — everything 
   - Backend: `cd backend && venv/Scripts/python -m uvicorn main:app --reload --port 8000`
   - Frontend: `cd frontend && npm run dev` (http://localhost:5173, proxies `/api` and `/uploads` to :8000)
 - Browser checks and screenshots: the `webapp-testing` skill (Python Playwright, installed). If the dev servers are up, just run a Playwright script against http://localhost:5173. If not, its `with_server.py` helper starts them — on Windows write the backend command with backslashes: `'cd backend && venv\Scripts\python -m uvicorn main:app --port 8000'`.
-- Deployed backend: `backend/venv/Scripts/python backend/smoke_test.py <render-url>` to prove it works; `backend/venv/Scripts/python backend/seed.py <render-url>` to recreate the demo account + data (every deploy wipes them). Both default to localhost:8000 without the URL.
+- Deployed backend: `backend/venv/Scripts/python backend/smoke_test.py <render-url>` to prove it works; `backend/venv/Scripts/python backend/seed.py <render-url>` to create the demo account + data (once — it persists). Both default to localhost:8000 without the URL.
 
 ## Deployed
 - Render (backend): [paste URL after deploying — DEPLOY.md section 1]
@@ -82,10 +82,10 @@ I talk loosely on purpose ("make it pop", "add a thing where people can save stu
 Prompts may arrive with "Budget right now: …" (5-hour and weekly usage, from a hook). Don't change how you work because of it — just don't let me get surprised: when the 5-hour limit passes 85%, or the weekly passes 70%, say so once, with the reset time, before starting the turn's work; and if a limit is about to be hit mid-feature, commit and push what's safe first. Model choice is mine (`/model`): I build on Sonnet and switch up for `/spec`, hard debugging, and final review — if a problem has beaten Sonnet twice, say "this one's worth switching models for".
 
 ## Gotchas
-- Uploaded files are served at `/uploads/<name>`; in the frontend wrap them with `assetUrl()`, never hardcode a host.
+- Uploaded files are stored in the database (not on disk — Render's disk is wiped on deploy) and served at `/uploads/<name>`; in the frontend wrap them with `assetUrl()`, never hardcode a host. 5MB max each; anything bigger belongs in external storage.
 - Frontend env vars must start with `VITE_`; changing `.env` needs a dev-server restart.
 - A page showing "Something broke" is the ErrorBoundary catching a component crash — the text under it is the real error message; the full stack is in the browser console.
-- Render free tier wipes the disk on every deploy and restart — SQLite data and uploads don't survive. After a deploy, "Incorrect email or password" on a known-good account means the account was wiped: run `seed.py <render-url>`.
+- Deployed data lives in Render's Postgres (`DATABASE_URL`, provisioned by `render.yaml`) and survives deploys. Locally it's SQLite in `backend/app.db`. Same code, both tested; don't write SQLite-only SQL.
 - Everyone at the venue shares one public IP, so per-IP rate limits are effectively per-venue. Keep limits ≥ 30/minute.
 - The backend mirrors its output (every request and every traceback) to `backend/server.log` — read that when the server runs in a window you can't see.
 - [add project-specific gotchas here as you hit them]

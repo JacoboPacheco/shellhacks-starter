@@ -38,7 +38,7 @@ export async function api(path, { method = 'GET', body, form } = {}) {
   if (!res.ok) {
     if (res.status === 401) {
       clearToken()
-      // lets useAuth drop the stale user (e.g. after a redeploy wiped the database)
+      // lets useAuth drop the stale user (token expired, or the account no longer exists)
       window.dispatchEvent(new Event('auth:expired'))
     }
     throw new Error(errorMessage(data, res.status))

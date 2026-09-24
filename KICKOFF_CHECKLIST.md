@@ -34,7 +34,7 @@
 - [ ] Claude keeps CLAUDE.md's "Current status" and "Decisions" updated after each commit — glance at them when you come back from a break; they're the session's memory
 - [ ] Three Claude Code moves worth knowing: a change made things worse → press **Esc twice** and rewind to before it; a side question you don't want cluttering the session → start it with `/btw`; the session feels confused after many corrections → `/clear` and restate the task (Claude re-reads CLAUDE.md, SPEC.md, and Current status)
 - [ ] Watch the status line at the bottom: `ctx` is how full Claude's memory is (it compacts itself near the top — fine), `5h` is your usage limit, `↑N` is unpushed commits
-- [ ] Deploy early (see DEPLOY.md), once, by hour 4 — then turn Auto-Deploy off and redeploy manually a few times a day. A broken deploy found early is a non-event; found late is a crisis.
+- [ ] Deploy early (see DEPLOY.md), by hour 4. Data lives in Render's Postgres, so redeploys don't lose anything. A broken deploy found early is a non-event; found late is a crisis.
 - [ ] `git push` every couple of hours — backup if the laptop dies, and it keeps the timestamped history safe (Claude nags at 2 unpushed commits)
 - [ ] Re-check Scope every few hours — cut "nice to have" the moment you're behind
 - [ ] Sleep night one. Solo with no sleep produces garbage on day two.
@@ -42,7 +42,7 @@
 ## Last 3 hours — stop building new features
 - [ ] Freeze features, fix only what's broken
 - [ ] Judging is table-to-table: **demo from your laptop's localhost** (`.\dev.ps1`, `seed.py` for fresh demo data). The deployed URL is for Devpost and for judges who click later.
-- [ ] Final manual deploy on Render + Vercel, then `backend\venv\Scripts\python backend\seed.py <render-url>` — every deploy erases the demo account and data. Write the demo login on paper.
+- [ ] Final push → Render + Vercel redeploy on their own; run `backend\venv\Scripts\python backend\smoke_test.py <render-url>` once it's green. Demo data persists in Postgres; write the demo login on paper anyway.
 - [ ] `/pitch` — 30-second and 2-minute versions, Devpost writeup, screenshots, project README. Read the 2-minute one out loud with a timer; memorize the 30-second one.
 - [ ] `/ship-check` — every readiness check, including the rules disclosure line and a secrets scan
 - [ ] Full run-through of the demo path on both localhost and the deployed URL

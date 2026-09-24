@@ -168,6 +168,11 @@ def test_upload_requires_auth():
 def test_upload_valid_image():
     payload = upload("test.png", "image/png", TINY_PNG, token=token["value"])
     assert payload["filename"].endswith(".png")
+    # the file must be served back with the right type and identical bytes
+    req = urllib.request.Request(BASE + payload["url"])
+    with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
+        assert resp.headers.get("content-type", "").startswith("image/png"), resp.headers.get("content-type")
+        assert resp.read() == TINY_PNG, "served bytes differ from the upload"
 
 
 def test_upload_wrong_type_rejected():

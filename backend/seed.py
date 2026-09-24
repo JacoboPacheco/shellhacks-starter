@@ -1,6 +1,6 @@
 """
-Recreate the demo account and demo data in one command — locally or on the
-deployed backend (Render wipes its database on every deploy).
+Create (or recreate) the demo account and demo data in one command — locally,
+or on the deployed backend after the first deploy. Idempotent: safe to rerun.
 
     venv/Scripts/python seed.py                          # local backend on :8000
     venv/Scripts/python seed.py https://<render-url>     # deployed backend

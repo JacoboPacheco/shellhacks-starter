@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from fastapi.staticfiles import StaticFiles
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from sqlalchemy import text
@@ -61,7 +60,6 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(uploads.router)
 app.include_router(llm.router)
-app.mount("/uploads", StaticFiles(directory=uploads.UPLOAD_DIR), name="uploads")
 
 
 @app.get("/api/health")

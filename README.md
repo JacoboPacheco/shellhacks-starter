@@ -1,6 +1,6 @@
 # Shellhacks starter
 
-FastAPI backend + React (Vite) frontend, wired together and verified working end to end, plus a `.claude/` setup that makes Claude Code faster and more reliable on this repo.
+FastAPI backend (SQLite locally, Postgres on Render — uploads live in the database too, so nothing is lost on deploys) + React (Vite) frontend, wired together and verified working end to end, plus a `.claude/` setup that makes Claude Code faster and more reliable on this repo.
 At kickoff, generate the project's repo from this template, run `/spec` in Claude Code with your idea, and start building features instead of plumbing.
 
 > **"Running scripts is disabled on this system"?** Fresh Windows blocks `.ps1` files. Run any of this repo's scripts as `powershell -ExecutionPolicy Bypass -File .\script.ps1`, or allow them for your account once with `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.

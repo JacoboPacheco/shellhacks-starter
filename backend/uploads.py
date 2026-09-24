@@ -1,16 +1,14 @@
 import uuid
-from pathlib import Path
 
-from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, UploadFile
+from sqlalchemy.orm import Session
 
 from auth import get_current_user
+from database import get_db
 from limiter import limiter
-from models import User
+from models import Upload, User
 
-router = APIRouter(prefix="/api", tags=["uploads"])
-
-UPLOAD_DIR = Path(__file__).parent / "uploads"
-UPLOAD_DIR.mkdir(exist_ok=True)
+router = APIRouter(tags=["uploads"])
 
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024  # 5 MB
 
@@ -23,29 +21,46 @@ SIGNATURES = {
 }
 
 
-def sniff(contents: bytes) -> str | None:
-    for magic, (ext, _content_type) in SIGNATURES.items():
+def sniff(contents: bytes) -> tuple[str, str] | None:
+    for magic, ext_type in SIGNATURES.items():
         if contents.startswith(magic):
-            return ext
+            return ext_type
     if contents[:4] == b"RIFF" and contents[8:12] == b"WEBP":
-        return ".webp"
+        return (".webp", "image/webp")
     return None
 
 
-@router.post("/upload")
+@router.post("/api/upload")
 @limiter.limit("60/minute")
-async def upload_file(request: Request, file: UploadFile, user: User = Depends(get_current_user)):
+async def upload_file(
+    request: Request, file: UploadFile, db: Session = Depends(get_db), user: User = Depends(get_current_user)
+):
     # Oversized requests are refused by the Content-Length middleware in main.py before
     # the body is read at all; this read cap is the backstop for bodies with no length.
     contents = await file.read(MAX_UPLOAD_BYTES + 1)
     if len(contents) > MAX_UPLOAD_BYTES:
         raise HTTPException(status_code=400, detail="File too large (max 5MB)")
 
-    ext = sniff(contents)
-    if ext is None:
+    sniffed = sniff(contents)
+    if sniffed is None:
         raise HTTPException(status_code=400, detail="Unsupported file type (must be PNG, JPEG, or WEBP)")
+    ext, content_type = sniffed
 
-    safe_name = f"{uuid.uuid4().hex}{ext}"
-    (UPLOAD_DIR / safe_name).write_bytes(contents)
+    name = f"{uuid.uuid4().hex}{ext}"
+    db.add(Upload(name=name, content_type=content_type, data=contents, user_id=user.id))
+    db.commit()
 
-    return {"filename": safe_name, "url": f"/uploads/{safe_name}"}
+    return {"filename": name, "url": f"/uploads/{name}"}
+
+
+@router.get("/uploads/{name}")
+def serve_upload(name: str, db: Session = Depends(get_db)):
+    upload = db.query(Upload).filter(Upload.name == name).first()
+    if upload is None:
+        raise HTTPException(status_code=404, detail="Not found")
+    # names are unguessable uuids, so a year of caching is safe
+    return Response(
+        content=upload.data,
+        media_type=upload.content_type,
+        headers={"Cache-Control": "public, max-age=31536000, immutable"},
+    )

@@ -15,8 +15,8 @@ export default function useAuth() {
   // Always resolves; never updates state synchronously (keeps the effect below lint-clean).
   const refresh = useCallback(() => {
     const me = () => api('/api/auth/me')
-    // Demo identity: log in, and if the account doesn't exist (a redeploy wiped the
-    // database), create it — so the demo self-heals instead of showing a logged-out page.
+    // Demo identity: log in, and if the account doesn't exist yet (fresh database,
+    // seed not run), create it — so the demo self-heals instead of showing a logged-out page.
     const demoLogin = () =>
       apiLogin(DEMO_EMAIL, DEMO_PASSWORD).catch(() => apiSignup(DEMO_EMAIL, DEMO_PASSWORD))
     const start = getToken()
