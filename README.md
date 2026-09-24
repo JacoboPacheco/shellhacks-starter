@@ -27,7 +27,7 @@ New machine with nothing installed? `powershell -ExecutionPolicy Bypass -File .\
 
 ## Run it
 
-From a **standalone PowerShell window** (not VS Code's terminal):
+From PowerShell (VS Code's terminal is fine):
 
 ```
 .\dev.ps1

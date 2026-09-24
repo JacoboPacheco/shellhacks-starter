@@ -27,7 +27,7 @@
 - [ ] `/clear`, `/model` → Sonnet, then "build from SPEC.md, walking skeleton first"
 
 ## Building
-- [ ] `.\dev.ps1` from a standalone PowerShell window keeps both servers up (backend auto-reloads)
+- [ ] `.\dev.ps1` keeps both servers up in two windows (backend auto-reloads); leave them running all day
 - [ ] Model plan: build on Sonnet. Switch up (`/model`) for hard debugging when Sonnet has failed twice, and for the final review. Switch back after.
 - [ ] Walking skeleton by hour 10: the ugliest version of the exact demo path working end to end. Then iterate. Never breadth-first.
 - [ ] Claude keeps CLAUDE.md's "Current status" and "Decisions" updated after each commit — glance at them when you come back from a break; they're the session's memory
