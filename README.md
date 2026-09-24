@@ -50,7 +50,7 @@ Opens the backend (auto-reloads when files change) and frontend in two windows. 
 | `/debug` | Reproduce → read the real error (server log, browser console) → fix the root cause → add a check. No guessing first |
 | `reviewer` agent | Fresh-eyes review of a finished feature's diff |
 | Edit hook | After every edit, lint-checks JS/JSX and syntax-checks Python so broken code is caught immediately |
-| Push reminder | When Claude finishes a turn with 4+ unpushed commits, it says so — pushes are your timestamped proof of event-time work and your backup |
+| Push reminder | When Claude finishes a turn with 2+ unpushed commits, it says so — pushes are your timestamped proof of event-time work and your backup if the machine dies |
 | Permissions | Routine commands (npm scripts, checks, git status/diff/commit) run without asking; `git push --force` and `git reset --hard` are denied; any other push still asks |
 | Plugins | `frontend-design` (visual polish) and `example-skills` (incl. `webapp-testing`) are registered in `.claude/settings.json`, so a fresh machine installs them on first open |
 

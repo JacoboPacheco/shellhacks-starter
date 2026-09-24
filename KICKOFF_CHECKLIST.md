@@ -1,5 +1,7 @@
 # Kickoff day runbook
 
+**ShellHacks 2026: Sept 25–27, FIU Graham Center (Modesto Maidique Campus), 36 hours of hacking.** Judging criteria, equally weighted: Completion, Originality, Design, Technology, Practicality. Submission is on Devpost and must have your GitHub repo attached — check the Hacker Guide / Discord on day 1 for the exact deadline and whether a video is required.
+
 ## Before the event (once, from this practice folder)
 - [ ] Put the starter on GitHub: `gh auth login`, then `gh repo create shellhacks-starter --public --source . --push`
 - [ ] On github.com → the repo → Settings → tick **Template repository**. Kickoff day then starts from a one-liner, and the new repo shows "generated from …/shellhacks-starter" — built-in disclosure of the pre-existing code.
@@ -26,6 +28,8 @@
 
 ## Last 3 hours — stop building new features
 - [ ] Freeze features, fix only what's broken
+- [ ] Render → service → Settings → Build & Deploy → **Auto-Deploy: No**. From here on pushes are backups only; ship a chosen commit with "Manual Deploy" so a stray push can't wipe the demo data mid-judging
+- [ ] **After the final deploy: create the demo account and demo data again — every deploy erases them** — and write the login on paper
 - [ ] `/ship-check` — runs every readiness check, including the rules disclosure line
 - [ ] `/pitch` — drafts the demo script, Devpost writeup, and judge Q&A from what actually got built; read it out loud once with a timer
 - [ ] Full run-through of the demo path on the deployed URL, not localhost

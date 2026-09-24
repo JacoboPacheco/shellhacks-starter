@@ -51,26 +51,30 @@ Run shell commands with the Bash tool (Git Bash), not PowerShell — everything 
 
 ## How to read me
 I talk loosely on purpose ("make it pop", "add a thing where people can save stuff", "this feels off"). I have a specific picture in my head; your job is to find it and build *that*, not the generic version. Asking is how you find it — just ask well.
-- Always start by restating what you heard in one line: "Reading that as: …". If you're confident, build it. If the request is about something I'll see or feel (a page, a flow, the "wow" moment), ask before building.
-- Ask with AskUserQuestion, 2–4 specific questions, each with concrete options and your recommendation first — never a bare "what do you mean?". I may not have the words for what I'm picturing; options with examples ("a feed like Instagram / a grid like Pinterest / a map") let me point at it.
+- Always start by restating what you heard in one line: "Reading that as: …". If you're confident, build it. If the request is about something I'll see or feel (a page, a flow, the "wow" moment), ask before building only when the plausible readings differ in what the demo shows *and* switching later would be expensive. Otherwise build the recommended reading, show it, and name the alternative.
+- Ask with AskUserQuestion, 2–4 specific questions, each with concrete options and your recommendation first — never a bare "what do you mean?". I may not have the words for what I'm picturing; options with examples ("a feed like Instagram / a grid like Pinterest / a map") let me point at it. An ask-before-build turn still shows something: a screenshot of the current page, or a rough wireframe per option, so I can point.
 - Ask about vision, not trivia. Vision: what a user sees first, what the demo's best moment is, list vs map vs feed, who it's for, what it must never do. Trivia you decide yourself: names, copy, colors, spacing, empty states, error messages — I'll say if I don't like them.
-- When I react ("this feels off", "no, not like that"): don't guess silently and don't defend it. Offer 2–3 guesses at what's bothering me, let me pick, then fix.
-- "Make it look better / nicer / pop / professional": use the `frontend-design` skill. Propose a direction in one sentence, plus one contrasting alternative, ask which — then apply it to the whole page consistently and keep it accessible.
-- If two readings are both plausible and both cheap, build one and mention the other. If they're expensive, ask.
-- If what I ask implies more than the Scope allows, build the smallest version that captures it and say what you left out. Don't refuse, don't negotiate scope mid-turn.
+- When I react ("this feels off", "no, not like that"): don't guess silently and don't defend it. Screenshot the current state and check it against the `frontend-design` skill's list of AI-looking tells, then offer 2–3 specific guesses at what's bothering me, let me pick, then fix.
+- "Make it look better / nicer / pop / professional": use the `frontend-design` skill. Apply the recommended direction to the whole page, screenshot it, and offer one contrasting alternative as a one-message switch. Once the app has a direction, reuse it on every other page without asking. Keep it accessible.
+- Several requests in one message: restate all of them, build the unambiguous ones now (one commit each), ask about the ambiguous ones in a single AskUserQuestion, then continue.
+- If what I ask implies more than the Scope allows, build the smallest version that captures it and say what you left out. Don't refuse, don't negotiate scope mid-turn. (Sponsor challenges are the exception — see Workflow.)
 - Every turn ends with something I can see — a screenshot, a running page, a `/check` result — plus at most one focused set of questions. Never a wall of questions with nothing built.
 - Vibe applies to interpretation, not correctness. `/check`, the reviewer, and small commits still happen every time.
 
 ## Workflow
-- For a new idea or big feature: `/spec` first. For anything touching more than one file: plan briefly. For a one-line fix, just do it.
-- When planning, point out which sponsor challenges the idea realistically qualifies for and the smallest addition that would qualify it for another — never force a fit.
+- `/spec` is for the initial idea only (the user types it). For a mid-event feature: plan in one paragraph — table, endpoints, where it appears in the UI, acceptance check — append it to SPEC.md, build. For a one-line fix, just do it.
+- Judging (ShellHacks): Completion, Originality, Design, Technology, Practicality, weighted equally, and judges grade what they see work — not code quality, not the pitch. When planning or cutting scope, protect Completion first: a small thing that fully works beats a big thing that half-works.
+- When planning, point out which sponsor challenges the idea realistically qualifies for and the smallest addition that would qualify it for another — never force a fit, and say plainly when a sponsor use would be thin. If I ask for a sponsor by name: fetch its current API docs first (never build from memory), propose 2–3 places it would do real work in the demo (recommendation first), build it behind an env var with a graceful "not configured" state, add the key name to `.env.example`, and ask me for the key once, at the end.
+- When I mention time left, judging, or the demo being soon: stop new features. Run `/check` and `git status -sb`, then give me exactly one next action in this priority: broken → unpushed → undeployed → pitch, and tell me to type `/ship-check` then `/pitch` (you can't run those).
 - Don't claim a feature is done without evidence: run `/check` and show the result. If something can't be verified, say so.
-- Before calling a nontrivial feature done: `/check`, then the `reviewer` agent on the uncommitted diff, fix what it finds, **then** commit. (Review before commit — after a commit the diff is empty.) Don't use subagents for routine building; they start with no memory of the conversation.
+- Before calling a nontrivial feature done: `/check`, then the `reviewer` agent on the uncommitted diff, fix what it finds, **then** commit. (Review before commit — after a commit the diff is empty.) Reviewer for anything touching backend, auth, or data; CSS- or copy-only changes just need `/check` + commit. Don't use subagents for routine building; they start with no memory of the conversation.
 - Commit after each feature that works (small commits, message says what now works). The commit history is our evidence the project was built during the event — never batch a whole day into one commit. Remind me to push every few hours.
+- After every commit, rewrite `## Current status` below (working / broken / in progress + its acceptance check), and append anything I confirmed about how the app should look or behave to `## Decisions`. Those two sections are the only memory that survives compaction, `/clear`, a dropped connection, or moving to another machine.
+- If you changed `backend/models.py`, end the turn with: "Delete `backend/app.db` and restart the backend" — `/check` uses a fresh database, so it passes while the dev server's old file 500s with "no such column".
 - If you've corrected the same mistake twice, stop — `/clear` and restate the task with what you learned.
 - When something's broken, use `/debug`: reproduce and read the actual error (server log, browser console) before changing code.
 - When compacting context, preserve: the feature in progress and its acceptance check, what's working vs broken, the files changed since the last commit, and any command that failed and why.
-- Photos: as the last step of a turn where pages got finished and `/check` passed, run the `images` skill — place your best picks, then ask me once to confirm or swap. Never mid-feature, and never block on my answer.
+- Photos: as the last step of a turn where pages got finished and `/check` passed, run the `images` skill — place your best picks, then ask me once to confirm or swap. Never mid-feature, never in the same turn a design direction was just applied (photos wait for the next pass), and never block on my answer.
 
 ## Gotchas
 - SQLite `create_all` never alters existing tables: after changing a model's columns, stop the backend and delete `backend/app.db` (dev data is disposable).
@@ -78,8 +82,13 @@ I talk loosely on purpose ("make it pop", "add a thing where people can save stu
 - Frontend env vars must start with `VITE_`; changing `.env` needs a dev-server restart.
 - Windows venv python is `venv/Scripts/python`, not `venv/bin/python`.
 - A page showing "Something broke" is the ErrorBoundary catching a component crash — the text under it is the real error message; the full stack is in the browser console.
-- Render free tier wipes the disk on redeploy/restart — SQLite data and uploads don't survive. Fine for a demo.
+- Render free tier wipes the disk on every deploy and restart — SQLite data and uploads don't survive. After a deploy, "Incorrect email or password" on a known-good account means the account was wiped: sign up again. Recreate the demo account and demo data after the final deploy.
+- Everyone at the venue shares one public IP, so per-IP rate limits are effectively per-venue. Keep limits ≥ 30/minute.
+- The backend mirrors its output (every request and every traceback) to `backend/server.log` — read that when the server runs in a terminal you can't see.
 - [add project-specific gotchas here as you hit them]
 
+## Decisions
+[Confirmed answers about how the app looks and behaves — layout, the wow moment, design direction, what it must never do. Append, don't rewrite.]
+
 ## Current status
-[Update as you go — what's working, what's broken, what you're mid-way through.]
+[Rewrite after every commit — working / broken / in progress + its acceptance check.]

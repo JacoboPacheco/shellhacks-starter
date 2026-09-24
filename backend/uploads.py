@@ -31,9 +31,11 @@ def sniff(contents: bytes) -> str | None:
 
 
 @router.post("/upload")
-@limiter.limit("10/minute")
+@limiter.limit("60/minute")
 async def upload_file(request: Request, file: UploadFile):
-    contents = await file.read()
+    # read at most limit+1 bytes: a huge file must not be pulled into memory
+    # just to be rejected (the free-tier instance has 512MB)
+    contents = await file.read(MAX_UPLOAD_BYTES + 1)
     if len(contents) > MAX_UPLOAD_BYTES:
         raise HTTPException(status_code=400, detail="File too large (max 5MB)")
 

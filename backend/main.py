@@ -1,4 +1,7 @@
+import logging
+import logging.handlers
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -8,6 +11,15 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 load_dotenv()
+
+# Mirror uvicorn's output (requests + tracebacks) to backend/server.log so it can be
+# read by tools even when the server runs in someone else's terminal window.
+_log_file = logging.handlers.RotatingFileHandler(
+    Path(__file__).parent / "server.log", maxBytes=2_000_000, backupCount=1, encoding="utf-8"
+)
+_log_file.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
+for _name in ("uvicorn", "uvicorn.error", "uvicorn.access"):
+    logging.getLogger(_name).addHandler(_log_file)
 
 import auth
 import uploads

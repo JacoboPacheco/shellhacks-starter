@@ -22,7 +22,9 @@ if not SECRET_KEY:
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # a week — fine for a hackathon demo
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# 10 rounds: ~60ms instead of ~250ms per hash on a full core; on Render's free
+# 0.1-CPU instance the default 12 would make every login take seconds
+pwd_context = CryptContext(schemes=["bcrypt"], bcrypt__rounds=10, deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -79,8 +81,11 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     return user
 
 
+# Limits are per client IP, and everyone on the venue wifi shares ONE public IP —
+# so these are effectively per-venue. Keep them high enough for a crowd; they
+# exist to stop scripts, not people.
 @router.post("/signup", response_model=TokenResponse)
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 def signup(request: Request, body: SignupRequest, db: Session = Depends(get_db)):
     if db.query(User).filter(User.email == body.email).first():
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -93,7 +98,7 @@ def signup(request: Request, body: SignupRequest, db: Session = Depends(get_db))
 
 
 @router.post("/login", response_model=TokenResponse)
-@limiter.limit("10/minute")
+@limiter.limit("60/minute")
 def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == normalize_email(form_data.username)).first()
     if not user or not pwd_context.verify(form_data.password, user.hashed_password):

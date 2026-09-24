@@ -4,7 +4,8 @@
 // there are >= THRESHOLD unpushed commits.
 import { spawnSync } from 'node:child_process'
 
-const THRESHOLD = 4
+// low on purpose: if the build machine dies, unpushed commits are the only thing lost
+const THRESHOLD = 2
 
 function git(...args) {
   const r = spawnSync('git', args, { encoding: 'utf8', timeout: 5000 })
