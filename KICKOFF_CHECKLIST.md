@@ -24,7 +24,7 @@
 - [ ] Do the one-time setup in README.md (venv, `pip install`, `npm install`, `backend\.env` with a new `JWT_SECRET` and your `GEMINI_API_KEY`)
 - [ ] `.\check.ps1` → must say `ALL CHECKS PASSED` before you write a single feature — and the "browser check" section must not say "skipped" (that means Playwright is missing)
 - [ ] Start Claude Code in the repo and **accept the "trust this folder" prompt** — until you do, the permission allowlist and hooks in `.claude/settings.json` are silently ignored. Also accept the prompt to install the repo's plugins (`frontend-design`, `example-skills`). If no prompt appears, `/plugin` and check they're listed.
-- [ ] `/model` → pick the bigger model for the spec; run `/spec <your idea in a sentence>`, answer its questions — it writes SPEC.md, fills in CLAUDE.md, and commits "Start ShellHacks project". Timebox: 20 minutes; you already chose the idea.
+- [ ] `/model` → pick the bigger model for the spec; run `/spec <your idea in a sentence>` and tell it when hacking ends (from the schedule) — it interviews you, writes SPEC.md, fills in CLAUDE.md including the Timeline, and commits "Start ShellHacks project". Timebox: 20 minutes; you already chose the idea.
 - [ ] `/clear`, `/model` → Sonnet, then "build from SPEC.md, walking skeleton first"
 
 ## Building

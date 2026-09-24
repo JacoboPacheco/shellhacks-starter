@@ -32,6 +32,12 @@ Run shell commands with the Bash tool (Git Bash), not PowerShell — everything 
 - Browser checks and screenshots: the `webapp-testing` skill (Python Playwright, installed). If the dev servers are up, just run a Playwright script against http://localhost:5173. If not, its `with_server.py` helper starts them — on Windows write the backend command with backslashes: `'cd backend && venv\Scripts\python -m uvicorn main:app --port 8000'`.
 - Deployed backend: `backend/venv/Scripts/python backend/smoke_test.py <render-url>` to prove it works; `backend/venv/Scripts/python backend/seed.py <render-url>` to create the demo account + data (once — it persists). Both default to localhost:8000 without the URL.
 
+## Timeline
+- Hacking ends: [fill at kickoff, e.g. 2026-09-27 09:00 local]
+- Milestone 1, walking skeleton working end to end: [kickoff + 10h]
+- Feature freeze: [hacking end − 3h]
+Use `date` in Bash to know the real time; compute hours left before any scope decision.
+
 ## Deployed
 - Render (backend): [paste URL after deploying — DEPLOY.md section 1]
 - Vercel (frontend): [paste URL — DEPLOY.md section 2]
@@ -67,7 +73,9 @@ I talk loosely on purpose ("make it pop", "add a thing where people can save stu
 
 ## Workflow
 - `/spec` is for the initial idea only (the user types it). For a mid-event feature: plan in one paragraph — table, endpoints, where it appears in the UI, acceptance check — append it to SPEC.md, build. For a one-line fix, just do it.
-- Build order: the walking skeleton first — the ugliest version of the exact demo path working end to end — then iterate on it. Never breadth-first.
+- Build order: the walking skeleton first — the ugliest version of the exact demo path working end to end — then iterate on it. Never breadth-first. Don't start feature #2 until milestone 1 is green; if I ask for something else before that, say "skeleton isn't done yet — X still fails" and offer to do the smallest piece that serves the skeleton.
+- Scope guard, at every commit: compare Current status against Scope and the Timeline. If must-haves won't fit the hours left, say which nice-to-have to cut *now* and why — don't wait for me to ask. Past the feature-freeze time, refuse new features and say so.
+- Definition of done, for any feature: `/check` is green, you looked at `.claude/tmp/e2e.png`, and the demo path still works end to end — `frontend/e2e/demo_path.py` passes (it replays SPEC.md's demo script; `/check` runs it automatically once it exists). "It should work" is not done.
 - Judges grade what they see work (Completion, Originality, Design, Technology, Practicality — equal weight; details in the `spec` skill). When planning or cutting scope, protect Completion first: a small thing that fully works beats a big thing that half-works.
 - When planning, point out which sponsor challenges the idea realistically qualifies for and the smallest addition that would qualify it for another — never force a fit, and say plainly when a sponsor use would be thin. If I ask for a sponsor by name: fetch its current API docs first (never build from memory), then ask one AskUserQuestion with 2–3 places it would do real work in the demo (recommendation first, with a wireframe of where it appears) and wait; then build it behind an env var with a graceful "not configured" state, add the key name to `.env.example`, and ask me for the key once, at the end.
 - When I mention time left, judging, or the demo being soon: stop new features. Run `/check` and `git status -sb`, then give me exactly one next action in this priority: broken → unpushed → undeployed (a Deployed URL is blank, or `smoke_test.py <render-url>` fails) → pitch. If the action is pitch, it is: type `/pitch`, then `/ship-check` (you can't run those; pitch first because it rewrites the README that ship-check verifies).

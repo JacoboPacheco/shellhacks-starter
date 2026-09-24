@@ -96,6 +96,11 @@ if [ "$up" -eq 1 ] && [ -n "$E2E_PY" ]; then
   done
   if [ "$pup" -eq 1 ]; then
     "$E2E_PY" "$ROOT/frontend/e2e/smoke.py" "http://localhost:$PREVIEW_PORT" || failed+=("browser check")
+    # the project's own demo path (written at milestone 1 from SPEC.md's demo script)
+    if [ -f "$ROOT/frontend/e2e/demo_path.py" ]; then
+      echo "== demo path (frontend/e2e/demo_path.py) =="
+      "$E2E_PY" "$ROOT/frontend/e2e/demo_path.py" "http://localhost:$PREVIEW_PORT" || failed+=("demo path")
+    fi
   else
     echo "vite preview never came up:"; tail -10 "$ROOT/frontend/check-preview.log"; failed+=("browser check")
   fi
