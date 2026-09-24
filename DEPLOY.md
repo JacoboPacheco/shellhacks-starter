@@ -17,7 +17,7 @@ After the practice run, delete the practice services (Render: service → Settin
 
 1. vercel.com → New Project → import the same repo.
 2. Root directory: `frontend` (Vite is auto-detected; `frontend/vercel.json` handles page routing).
-3. Environment variable `VITE_API_URL` = your Render URL from above, **no trailing slash**. If the app uses the demo auto-login, also add `VITE_DEMO_EMAIL` and `VITE_DEMO_PASSWORD` (same values as `frontend/.env`).
+3. Environment variable `VITE_API_URL` = your Render URL from above, **no trailing slash**. Unless the idea has real multi-user accounts, also add `VITE_DEMO_EMAIL` and `VITE_DEMO_PASSWORD` (same values as `frontend/.env`).
 4. Deploy. Get the URL from **Project → Settings → Domains** (the stable `yourapp.vercel.app` one), not the "Visit" button — that often opens a per-deployment URL like `yourapp-abc123.vercel.app`, which won't match the CORS setting below. Copy it into CLAUDE.md under **Deployed**.
 
 ## 3. Close the loop
@@ -37,7 +37,7 @@ Render's free tier spins down after 15 min idle, and the next request waits 30s 
 
 ## Redeploying during the hackathon
 
-Both services redeploy automatically on every `git push` — a few minutes for Render, less for Vercel — and **the data stays**. Two things to know:
+Vercel redeploys on every `git push`; Render only when the push changes something under `backend/` (`render.yaml` sets `rootDir: backend`) — a few minutes for Render, less for Vercel — and **the data stays**. Two things to know:
 - Render's free tier has ~500 build minutes a month at ~3 per deploy. Pushing every ten minutes for 36 hours would burn through them; if you're pushing that often, Render → service → Settings → Build & Deploy → Auto-Deploy: No, and redeploy manually a few times a day.
 - Don't redeploy in the last 15 minutes before a demo, and demo from localhost when judges are at your table.
 

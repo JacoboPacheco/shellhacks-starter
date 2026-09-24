@@ -54,7 +54,7 @@ Demo account and demo data (recreate any time, locally or on Render): `backend\v
 | `/spec <idea>` | Interviews you about your idea and writes SPEC.md (never suggests its own ideas) |
 | `/check` | Runs `scripts/check.sh` and reports with evidence |
 | `images` skill | When a page is done, Claude finds its photo spots, looks at Unsplash options, places its best picks with credit, then asks you once to confirm or swap. Also runs on `/images` |
-| `/pitch` | Drafts the 30-second and 2-minute pitch, Devpost writeup, disclosure line, judge Q&A, screenshots, and the project README from what actually got built |
+| `/pitch` | Drafts the 30-second pitch, the 3-minute presentation script (also the video narration), Devpost writeup, disclosure line, judge Q&A, screenshots, and the project README from what actually got built |
 | `/ship-check` | Pre-demo readiness check, including the ShellHacks disclosure rule and a secrets scan (run after `/pitch`) |
 | `/debug` | Reproduce → read the real error (server log, browser console) → fix the root cause → add a check. No guessing first |
 | `reviewer` agent | Fresh-eyes review of a diff before commit — used for auth/data/security changes |

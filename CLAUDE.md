@@ -11,7 +11,6 @@ You're a great engineer and this team is lucky to have you on this build — let
 
 ## Stack
 FastAPI (backend; SQLite locally, Postgres on Render), React + Vite (frontend), Render + Vercel (deploy) — change only if the idea truly needs something else.
-- APIs/keys needed: [list them]
 
 ## Scope (hackathon-realistic)
 Must have (demo breaks without these — tick each in the commit that finishes it):
@@ -31,14 +30,13 @@ Shell commands go through the Bash tool (Git Bash) from the repo root. The shell
 - Verify everything: `bash scripts/check.sh` (or `/check`, which owns the timeout) — lint, build, backend smoke test, headless-browser check, and `demo_path.py` once it exists. Self-contained on :8765/:4173; the dev servers needn't be running.
 - The dev servers are the human's (`.\dev.ps1`). If you must start one, use `run_in_background` — a foreground server blocks the Bash tool. Backend: `backend/venv/Scripts/python -m uvicorn main:app --app-dir backend --reload --reload-dir backend --port 8000`. Frontend: `npm run dev --prefix frontend` (:5173, proxies `/api` and `/uploads` to :8000).
 - New dependency: `npm install --prefix frontend <pkg>` / `backend/venv/Scripts/pip install <pkg>`, then add the Python one to `backend/requirements.txt` yourself — pip doesn't.
-- Browser checks and screenshots: Python Playwright is installed (the `webapp-testing` skill shows the API; skip its `with_server.py`). Write scripts to `scratch/` (gitignored) and run them as `python scratch/<name>.py` against http://localhost:5173 — dev servers down → start both as above first.
+- Browser checks and screenshots: Python Playwright is installed (`frontend/e2e/smoke.py` is the in-repo example). Write scripts to `scratch/` (gitignored) and run them as `python scratch/<name>.py` against http://localhost:5173 — dev servers down → start both as above first.
 - Deployed: `backend/venv/Scripts/python backend/smoke_test.py <render-url> <vercel-url>` tests the deployed pair (CORS, build URL, every endpoint); `backend/venv/Scripts/python backend/seed.py <render-url>` creates the demo account if missing and adds any missing `seed_project_data` rows.
 
 ## Timeline
 - Kickoff (K): [fill at kickoff, e.g. 2026-09-25 19:00 local]
 - Hacking ends (E): [the 2026 Hacker Guide says Sunday 2026-09-27 11:00 ET, submissions close at the same time — confirm at kickoff]
-- Milestone 1, walking skeleton working end to end: K + 10h
-- Feature freeze: E − 3h
+- Phase times: the PLAYBOOK phase headers.
 
 ## Deployed
 - Render (backend): [paste URL after deploying — DEPLOY.md section 1]
@@ -49,7 +47,7 @@ Shell commands go through the Bash tool (Git Bash) from the repo root. The shell
 - All frontend→backend calls go through `frontend/src/api.js` (`api`, `login`, `signup`, `uploadFile`, `ask`, `assetUrl`). Never call `fetch` directly.
 - No login screen by default. Per-person state (saves, likes, history) is keyed to the demo account: `VITE_DEMO_EMAIL`/`VITE_DEMO_PASSWORD` in `frontend/.env` (matching `backend/seed.py`) make `useAuth()` — called from `App.jsx`; keep that call — sign in on load, so `Depends(get_current_user)` keeps working with no screen. Never move per-user logic into localStorage. Only a true multi-user idea renders `<AuthForm login={login} signup={signup} />` when `user` is null (labels and error display built in; reuse, don't rebuild).
 - New backend feature = new router module shaped like `backend/uploads.py`, then `app.include_router(...)` in `main.py`. Protect routes with `Depends(get_current_user)` from `auth.py`; rate-limit public POSTs with `@limiter.limit("N/minute")` (the handler needs a `request: Request` param). Every new endpoint gets a check in `backend/smoke_test.py` that acts as its own throwaway user and creates nothing another user would see — it also runs against Render.
-- Tables go in `backend/models.py`. Startup creates missing tables and adds a column that's new on an existing table, nullable. Existing rows get NULL there and `seed.py` skips rows that already exist, so make the field `X | None`, give the UI a fallback, and check the dev server (whose `app.db` has old rows) before committing — `/check` starts empty and won't see it. Use `String`, not `Enum`, for a mid-event column (Postgres needs the enum type created first). Renames and type changes: Gotchas.
+- Tables go in `backend/models.py`. Startup creates missing tables and adds a column that's new on an existing table, nullable. Existing rows get NULL there and `seed.py` skips rows that already exist, so make the field `X | None`, give the UI a fallback, and check the dev server (whose `app.db` has old rows) before committing — `/check` starts empty and won't see it. If a seeded demo record needs the new field: `seed_project_data` fills it on its own records where it's NULL through an existing update endpoint; with no such endpoint, the route derives the value when the column is NULL. Use `String`, not `Enum`, for a mid-event column (Postgres needs the enum type created first). Renames and type changes: Gotchas.
 - Demo data goes in `seed_project_data` in `backend/seed.py`, via the API. It runs on every `/check` and every `seed.py <render-url>`, so it must be idempotent: check before creating.
 - AI calls: `from llm import complete` → `await complete(prompt, system=..., json_mode=True, fallback=FALLBACK, image=(bytes, "image/png"))`. `POST /api/ai/ask` in `llm.py` is the example route: copy both of its limit decorators onto every AI route — the per-visitor one and the shared `AI_DAILY_LIMIT` one, which is the only thing protecting the free quota. `fallback=` is mandatory on the demo path; the route returns `"fallback": text == FALLBACK` (pattern in `complete`'s docstring) and the UI badges it. `ask()` → `/api/ai/ask` has no fallback on purpose — never call it from the demo path; give the feature its own route. Without `GEMINI_API_KEY`, a call without `fallback=` returns a clear 503 and a call with it returns the fallback — build the feature anyway.
 - A new API key: name it in the matching `.env.example`, build the feature anyway, and at the end of the turn that builds it ask me to paste the key into `backend/.env` (if I paste it in chat, write it there yourself, nowhere else); then the backend restart (Gotchas) and, if deployed, Render → Environment.
@@ -67,7 +65,7 @@ I talk loosely on purpose. I have a specific picture in my head; your job is to 
 - When I react ("this feels off", "no, not like that"): screenshot the current state, check it against the `frontend-design` skill's list of AI-looking tells, offer 2–3 specific guesses at what's bothering me, let me pick, fix.
 - "Make it look better / nicer / pop / professional": the `frontend-design` skill, briefed with the Idea, the audience, and Decisions. Apply the direction to the whole page, screenshot, offer one contrasting alternative as a one-message switch. Write the direction into Decisions the same turn (`ASSUMED:` until I confirm it), then reuse it everywhere without asking.
 - Several requests in one message: restate all, build the unambiguous ones now, ask about the ambiguous ones in a single AskUserQuestion, continue.
-- Every turn ends with something I can see — a screenshot, a running page, a `/check` result — plus at most one AskUserQuestion call.
+- Every turn ends with something I can see — a screenshot, a running page, a `/check` result — plus at most one AskUserQuestion call (the `/spec` interview excepted).
 
 ## Workflow
 - A feature request mid-event, or one bigger than Scope: build the smallest version that captures it and say what you left out. Plan it in one paragraph (table, endpoints, where it appears in the UI, acceptance check), add it to SPEC.md and to Scope as the next nice-to-have (a must-have only if I say so), log what I confirmed in Decisions, build it now, then run the scope guard. Exceptions: PLAYBOOK Phase 2 and Phase 5.
@@ -78,15 +76,14 @@ I talk loosely on purpose. I have a specific picture in my head; your job is to 
 - Commit after each feature that works, one commit per feature. Before each feature commit, rewrite `## Current status` and append new confirmed answers to `## Decisions`, so they land in that commit. After each commit, `git status -sb`; at `ahead 2` or more, `git push` (until PLAYBOOK Phase 5 says stop).
 - I say judging starts within 3 hours: PLAYBOOK Phase 5.
 - The same fix has failed twice: stop, say so, write `DO FIRST: <the next thing to try> — tried: …` into `## Current status`, commit it, then ask me to `/clear` — and say if a bigger `/model` is worth it. (Alone: PLAYBOOK → Away mode.)
-- When compacting context, preserve: the feature in progress and its acceptance check, working vs broken, files changed since the last commit, any command that failed and why, and whether Away mode is on (human asleep since HH:MM — no AskUserQuestion, keep going).
+- When compacting context, preserve: the feature in progress and its acceptance check, working vs broken, files changed since the last commit, any command that failed and why, and whether Away mode is on (human asleep since HH:MM).
 
 ## Budget
 Prompts may arrive with "Budget right now: …". 5-hour past 85% or weekly past 70% → say so when it first crosses (and again after a `/clear`, not every turn), with the reset time when the hook gives one, before the turn's work; a limit about to hit mid-feature → commit and push what's safe first.
 
 ## Gotchas
-- Uploaded files are stored in the database and served at `/uploads/<name>`; wrap them with `assetUrl()` in the frontend, never hardcode a host.
-- Frontend env vars must start with `VITE_`; Vite restarts itself when `frontend/.env` changes (reload the page). `backend/.env` is read once at startup — a change needs a backend restart, and the dev server runs in my window: ask me.
-- Render runs Postgres, local is SQLite: don't write SQLite-only SQL.
+- Upload URLs go through `assetUrl()` in the frontend, never a hardcoded host.
+- Vite restarts itself when `frontend/.env` changes (reload the page). `backend/.env` is read once at startup — a change needs a backend restart, and the dev server runs in my window: ask me.
 - Keep rate limits ≥ 30/minute (the whole venue shares one IP).
 - A renamed column or changed type isn't migrated. Locally: ask me to close the backend window, then `rm backend/app.db`, ask me to rerun `.\dev.ps1`, then `backend/venv/Scripts/python backend/seed.py`. Deployed, only an *added* column is handled — so add a new column instead of renaming, and alone (Away mode) never rename or retype.
 - `git restore .` / `git checkout .` / `git reset --hard` are denied. To drop uncommitted work, ask me to rewind (Esc Esc) or run it myself.
