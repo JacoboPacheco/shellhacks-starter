@@ -27,11 +27,9 @@ Render → your service → Environment → set `ALLOWED_ORIGINS` to your Vercel
 Prove the deployed pair works, not just that it's up — the backend answers, it accepts requests from the Vercel origin, and the Vercel build actually points at this backend — then create the demo account and demo data once (they persist from here on):
 
 ```
-$env:SMOKE_ORIGIN='https://<your-vercel-url>'; backend\venv\Scripts\python backend\smoke_test.py https://<your-render-url>
+backend\venv\Scripts\python backend\smoke_test.py https://<your-render-url> https://<your-vercel-url>
 backend\venv\Scripts\python backend\seed.py https://<your-render-url>
 ```
-
-(In Git Bash / Claude Code: `SMOKE_ORIGIN=https://<vercel-url> backend/venv/Scripts/python backend/smoke_test.py https://<render-url>`.)
 
 ## 4. Keep the backend awake (2 minutes, do it right after deploying)
 

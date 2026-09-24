@@ -32,6 +32,7 @@
 - [ ] Model plan: build on Sonnet. Switch up (`/model`) for hard debugging when Sonnet has failed twice, and for the final review. Switch back after.
 - [ ] Walking skeleton by hour 10: the ugliest version of the exact demo path working end to end. Then iterate. Never breadth-first.
 - [ ] Claude keeps CLAUDE.md's "Current status" and "Decisions" updated after each commit — glance at them when you come back from a break; they're the session's memory
+- [ ] If the laptop restarts or the terminal dies: `.\dev.ps1` again, then `claude --continue` in the repo — it picks up the same session; its first move is reading Current status
 - [ ] Three Claude Code moves worth knowing: a change made things worse → press **Esc twice** and rewind to before it; a side question you don't want cluttering the session → start it with `/btw`; the session feels confused after many corrections → `/clear` and restate the task (Claude re-reads CLAUDE.md, SPEC.md, and Current status)
 - [ ] Watch the status line at the bottom: `ctx` is how full Claude's memory is (it compacts itself near the top — fine), `5h` is your usage limit, `↑N` is unpushed commits
 - [ ] Deploy early (see DEPLOY.md), by hour 4. Data lives in Render's Postgres, so redeploys don't lose anything. A broken deploy found early is a non-event; found late is a crisis.

@@ -5,8 +5,9 @@ validation all actually work — don't just eyeball it.
 
 Usage:
   venv/Scripts/python smoke_test.py                              # local server on :8000
-  venv/Scripts/python smoke_test.py https://yourapp.onrender.com # the deployed backend
-  (SMOKE_BASE_URL=... also works)
+  venv/Scripts/python smoke_test.py https://yourapp.onrender.com                          # the deployed backend
+  venv/Scripts/python smoke_test.py https://yourapp.onrender.com https://yourapp.vercel.app # + CORS and build-URL checks
+  (SMOKE_BASE_URL / SMOKE_ORIGIN env vars also work)
 """
 
 import base64
@@ -25,9 +26,9 @@ TINY_PNG = base64.b64decode(
 )
 
 BASE = (sys.argv[1] if len(sys.argv) > 1 else os.getenv("SMOKE_BASE_URL", "http://localhost:8000")).rstrip("/")
-# Set to the deployed frontend's origin (e.g. https://yourapp.vercel.app) to also verify CORS
-# and that the deployed frontend was built with THIS backend's URL baked in.
-ORIGIN = os.getenv("SMOKE_ORIGIN")
+# Second argument (or SMOKE_ORIGIN): the deployed frontend's origin, e.g. https://yourapp.vercel.app.
+# When given, also verifies CORS and that the deployed frontend was built with THIS backend's URL.
+ORIGIN = (sys.argv[2] if len(sys.argv) > 2 else os.getenv("SMOKE_ORIGIN", "")).rstrip("/") or None
 TIMEOUT = 30
 failures = []
 
