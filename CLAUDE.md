@@ -93,7 +93,7 @@ Prompts may arrive with "Budget right now: …". 5-hour past 85% or weekly past 
 - [add project-specific gotchas here as you hit them]
 
 ## Decisions
-[Confirmed answers about how the app looks and behaves — layout, the wow moment, design direction, what it must never do. Append, don't rewrite — except the single `RUNNER-UP` line, which `/ideas` writes or replaces and a switch to it deletes.]
+[Confirmed answers about how the app looks and behaves — layout, the wow moment, design direction, what it must never do. Append, don't rewrite — except the `RUNNER-UP`, `Facts:`, and `OVERRIDE` lines, which `/ideas` writes or replaces (a switch to the runner-up deletes `RUNNER-UP`).]
 
 ## Current status
 PHASE: 0 — repo just generated, SPEC.md doesn't exist yet
