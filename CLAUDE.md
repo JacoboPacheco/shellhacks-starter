@@ -34,8 +34,8 @@ Shell commands go through the Bash tool (Git Bash) from the repo root. The shell
 - Deployed: `backend/venv/Scripts/python backend/smoke_test.py <render-url> <vercel-url>` tests the deployed pair (CORS, build URL, every endpoint); `backend/venv/Scripts/python backend/seed.py <render-url>` creates the demo account if missing and adds any missing `seed_project_data` rows.
 
 ## Timeline
-- Kickoff (K): [fill at kickoff, e.g. 2026-09-25 19:00 local]
-- Hacking ends (E): [the 2026 Hacker Guide says Sunday 2026-09-27 11:00 ET, submissions close at the same time — confirm at kickoff]
+- Kickoff (K): 2026-09-24 21:00 local (DRY RUN — real coding starts 2026-09-25; reset K then)
+- Hacking ends (E): 2026-09-27 11:00 ET (submissions close at the same time)
 - Phase times: the PLAYBOOK phase headers.
 
 ## Deployed
