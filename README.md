@@ -3,7 +3,7 @@
 **This is a template, not a project.** It holds plumbing (auth, uploads, deploy, checks, an LLM helper), a small UI kit, and one clearly-labelled example feature that exists to be copied and then deleted. The hackathon project is generated from it at kickoff and built from that point on; the first commit after generation is "Start ShellHacks project".
 
 FastAPI backend (SQLite locally, Postgres on Render — uploads live in the database too, so nothing is lost on deploys) + React (Vite) frontend with a small UI kit and one example feature, wired together and verified working end to end, plus a `.claude/` setup that makes Claude Code faster and more reliable on this repo.
-At kickoff, generate the project's repo from this template, run `/ideas` (if you have no idea yet) and `/spec` in Claude Code, and start building features instead of plumbing.
+At kickoff, generate the project's repo from this template, run `/ideas` (no idea yet, or candidates to score) and `/spec` in Claude Code, and start building features instead of plumbing.
 
 > **"Running scripts is disabled on this system"?** Fresh Windows blocks `.ps1` files. Run any of this repo's scripts as `powershell -ExecutionPolicy Bypass -File .\script.ps1`, or allow them for your account once with `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
 
@@ -53,7 +53,7 @@ Demo account and demo data (recreate any time, locally or on Render): `backend\v
 |---|---|
 | `CLAUDE.md` | Standing orders: commands, codebase patterns, how to interpret loose requests, gotchas, and the two sections Claude keeps updated (Decisions, Current status) |
 | `PLAYBOOK.md` | What Claude does in each phase of the event — sanity, spec, walking skeleton, build-out, away mode, polish, freeze and ship, recovery |
-| `/ideas` | For when you have no idea yet: interviews you, generates candidates from the sponsor challenge list, scores them, kills the weak ones, helps you pick |
+| `/ideas` | No idea yet, or candidates to score: interviews you, generates candidates from the sponsor challenge list, scores yours and its own on the judging criteria, kills the weak ones with evidence, helps you pick |
 | `/spec <idea>` | Interviews you about your idea and writes SPEC.md (never suggests its own ideas) |
 | `/check` | Runs `scripts/check.sh` and reports with evidence |
 | `images` skill | When a page is done, Claude finds its photo spots, looks at Unsplash options, places its best picks with credit, then asks you once to confirm or swap. Also runs on `/images` |
