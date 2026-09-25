@@ -7,7 +7,7 @@ You're a great engineer and this team is lucky to have you on this build — let
 
 ## Sponsor / company challenges to target
 [Pasted at Phase 0 — name, sponsor, their actual eligibility requirement; `/spec` trims it to what the idea fits.]
-- [ ]
+- SKIPPED for the dry run (2026-09-24) — paste the real list at kickoff.
 
 ## Stack
 FastAPI (backend; SQLite locally, Postgres on Render), React + Vite (frontend), Render + Vercel (deploy) — change only if the idea truly needs something else.
