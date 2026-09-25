@@ -21,11 +21,11 @@
 - [ ] In `C:\dev` (outside OneDrive — it's slow and locks files mid-build):
   `gh repo create <project-name> --public --clone --template <your-github-user>/shellhacks-starter`
   The project gets its own GitHub repo with event-time history only, and a "generated from" badge that discloses the template.
-- [ ] Paste the sponsor challenge list (from the opening ceremony / event site) into CLAUDE.md under "Sponsor / company challenges to target" — `/spec` reads it from there
+- [ ] Paste the sponsor challenge list (from the opening ceremony / event site) into CLAUDE.md under "Sponsor / company challenges to target" — `/ideas` and `/spec` read it from there (or skip this and paste it when Claude asks)
 - [ ] Do the one-time setup in README.md (venv, `pip install`, `npm install`, `backend\.env` with a new `JWT_SECRET` and your `GEMINI_API_KEY`)
 - [ ] `.\check.ps1` → must say `ALL CHECKS PASSED` before you write a single feature — and the "browser check" section must not say "skipped" (that means Playwright is missing)
 - [ ] Start Claude Code in the repo and **accept the "trust this folder" prompt** — until you do, the permission allowlist and hooks in `.claude/settings.json` are silently ignored. Also accept the prompt to install the repo's plugins (`frontend-design`, `example-skills`). If no prompt appears, `/plugin` and check they're listed.
-- [ ] `/model` → pick the bigger model. No idea yet, or candidates to score: run `/ideas` first (25 minutes) — it generates and scores candidates against the sponsor list and you pick one. Then run `/spec <your idea in a sentence>` — it interviews you, writes SPEC.md, fills in CLAUDE.md, and commits "Start ShellHacks project". (Claude's first question asks for the kickoff and end times — have the schedule handy.) Timebox for `/spec`: 20 minutes.
+- [ ] `/model` → pick the bigger model. No idea yet, or candidates to score: run `/ideas <your candidates, if any>` first (25 minutes) — it generates and scores candidates against the sponsor list and you pick one. Then run `/spec <your idea in a sentence>` — it interviews you, writes SPEC.md, fills in CLAUDE.md, and commits "Start ShellHacks project". (Claude assumes kickoff = now and the end time from the Hacker Guide — correct it if either is wrong.) Timebox for `/spec`: 20 minutes.
 - [ ] `/clear`, `/model` → Sonnet, then "build from SPEC.md, walking skeleton first"
 
 ## Building

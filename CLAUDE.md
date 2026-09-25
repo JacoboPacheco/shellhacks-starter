@@ -62,7 +62,7 @@ Shell commands go through the Bash tool (Git Bash) from the repo root. The shell
 ## How to read me
 I talk loosely on purpose. I have a specific picture in my head; your job is to find it and build *that*, not the generic version — and asking well is how you find it.
 - Start every request by restating it in one line: "Reading that as: …". Confident → build. Something I'll see or feel (a page, a flow, the wow moment) → ask first only when the plausible readings differ in what the demo shows *and* switching later would be expensive; otherwise build the recommended reading, show it, name the alternative.
-- Ask with AskUserQuestion: 1–4 specific questions, concrete options, your recommendation first — never a bare "what do you mean?". I may not have words for what I'm picturing; options with examples ("a feed / a grid / a map") let me point. An ask-first turn still shows something — a screenshot of the current page or a rough wireframe per option.
+- Ask with AskUserQuestion: 1–4 specific questions, concrete options, your recommendation first (not on questions about me — the `/ideas` interview) — never a bare "what do you mean?". I may not have words for what I'm picturing; options with examples ("a feed / a grid / a map") let me point. An ask-first turn still shows something — a screenshot of the current page or a rough wireframe per option.
 - Ask about vision, not trivia. Vision: what a user sees first, the demo's best moment, list vs map vs feed, who it's for, what it must never do. Trivia you decide: names, copy, colors, spacing, empty states, error messages — I'll say if I don't like them.
 - When I react ("this feels off", "no, not like that"): screenshot the current state, check it against the `frontend-design` skill's list of AI-looking tells, offer 2–3 specific guesses at what's bothering me, let me pick, fix.
 - "Make it look better / nicer / pop / professional": the `frontend-design` skill, briefed with the Idea, the audience, and Decisions. Apply the direction to the whole page, screenshot, offer one contrasting alternative as a one-message switch. Write the direction into Decisions the same turn (`ASSUMED:` until I confirm it), then reuse it everywhere without asking.
@@ -93,7 +93,7 @@ Prompts may arrive with "Budget right now: …". 5-hour past 85% or weekly past 
 - [add project-specific gotchas here as you hit them]
 
 ## Decisions
-[Confirmed answers about how the app looks and behaves — layout, the wow moment, design direction, what it must never do. Append, don't rewrite.]
+[Confirmed answers about how the app looks and behaves — layout, the wow moment, design direction, what it must never do. Append, don't rewrite — except the single `RUNNER-UP` line, which `/ideas` replaces.]
 
 ## Current status
 PHASE: 0 — repo just generated, SPEC.md doesn't exist yet

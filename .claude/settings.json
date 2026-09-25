@@ -17,6 +17,7 @@
     "allow": [
       "WebSearch",
       "WebFetch(domain:devpost.com)",
+      "WebFetch(domain:*.devpost.com)",
       "Bash(bash scripts/check.sh*)",
       "Bash(node scripts/unsplash.mjs *)",
       "Bash(npm run *)",
