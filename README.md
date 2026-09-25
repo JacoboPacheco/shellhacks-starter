@@ -53,7 +53,7 @@ Demo account and demo data (recreate any time, locally or on Render): `backend\v
 |---|---|
 | `CLAUDE.md` | Standing orders: commands, codebase patterns, how to interpret loose requests, gotchas, and the two sections Claude keeps updated (Decisions, Current status) |
 | `PLAYBOOK.md` | What Claude does in each phase of the event — sanity, spec, walking skeleton, build-out, away mode, polish, freeze and ship, recovery |
-| `/ideas` | No idea yet, or candidates to score: interviews you, generates candidates from the sponsor challenge list, scores yours and its own on the judging criteria, kills the weak ones with evidence, helps you pick |
+| `/ideas` | No idea yet, or candidates to score: interviews you, generates four candidates from your answers, scores yours and its own on the judging criteria and sponsor fit, kills the weak ones with evidence, helps you pick |
 | `/spec <idea>` | Interviews you about your idea and writes SPEC.md (never suggests its own ideas) |
 | `/check` | Runs `scripts/check.sh` and reports with evidence |
 | `images` skill | When a page is done, Claude finds its photo spots, looks at Unsplash options, places its best picks with credit, then asks you once to confirm or swap. Also runs on `/images` |
