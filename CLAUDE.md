@@ -67,7 +67,7 @@ I talk loosely on purpose. I have a specific picture in my head; your job is to 
 - When I react ("this feels off", "no, not like that"): screenshot the current state, check it against the `frontend-design` skill's list of AI-looking tells, offer 2–3 specific guesses at what's bothering me, let me pick, fix.
 - "Make it look better / nicer / pop / professional": the `frontend-design` skill, briefed with the Idea, the audience, and Decisions. Apply the direction to the whole page, screenshot, offer one contrasting alternative as a one-message switch. Write the direction into Decisions the same turn (`ASSUMED:` until I confirm it), then reuse it everywhere without asking.
 - Several requests in one message: restate all, build the unambiguous ones now, ask about the ambiguous ones in a single AskUserQuestion, continue.
-- Every turn ends with something I can see — a screenshot, a running page, a `/check` result — plus at most one AskUserQuestion call (the `/spec` interview excepted).
+- Every turn ends with something I can see — a screenshot, a running page, a `/check` result — plus at most one AskUserQuestion call. The `/ideas` and `/spec` interviews are exempt from this and from the show-something rule — their cards, score tables, and demo-script read-backs are what I see.
 
 ## Workflow
 - A feature request mid-event, or one bigger than Scope: build the smallest version that captures it and say what you left out. Plan it in one paragraph (table, endpoints, where it appears in the UI, acceptance check), add it to SPEC.md and to Scope as the next nice-to-have (a must-have only if I say so), log what I confirmed in Decisions, build it now, then run the scope guard. Exceptions: PLAYBOOK Phase 2 and Phase 5.

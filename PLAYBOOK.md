@@ -14,18 +14,19 @@ For the Claude Code session building this project. CLAUDE.md holds the rules for
 Entry: SPEC.md does not exist.
 - Confirm setup: `backend/venv`, `backend/.env` with `JWT_SECRET` (and `GEMINI_API_KEY` if the idea uses AI), `frontend/node_modules`, and `frontend/.env` with the two `VITE_DEMO_*` lines uncommented (not a secret — copy `frontend/.env.example` and create it yourself). Missing pieces: `python -m venv backend/venv`, `backend/venv/Scripts/pip install -r backend/requirements.txt`, `npm install --prefix frontend`; the human creates `backend/.env` and pastes keys.
 - `/check` must end `ALL CHECKS PASSED` with no `SKIPPED` browser section. If SKIPPED: `python -m pip install playwright && python -m playwright install chromium`; if the download fails on venue wifi, ask the human to switch to the phone hotspot and retry now — Phase 0 doesn't exit with SKIPPED.
-- CLAUDE.md → "Sponsor / company challenges to target" still a placeholder: ask the human for the list and paste it in.
+- CLAUDE.md → "Sponsor / company challenges to target" still a placeholder: ask the human for the list and paste it in. If it isn't out yet, write `not released yet (HH:MM)` under the heading and continue; paste it the moment they have it.
 Exit: check green, sponsors written. Already inside `/ideas` or `/spec` → continue it; otherwise say: switch `/model` to the bigger model, then type `/ideas` if there's no idea yet, or `/spec <idea>` if there is.
 
-## Phase 1 — Idea and spec (K+0:15 → K+0:50)
+## Phase 1 — Idea and spec (K+0:15 → K+1:00)
 
-`/ideas` (only when the human has no idea, or wants their candidates scored against the sponsor list; K+0:15 → 0:30) then `/spec` (K+0:30 → 0:50). Both are typed by the human; everything they do is in the skills. Exit: `/spec`'s commit and hand-off are done.
+`/ideas` (only when the human has no idea, or wants their candidates scored against the sponsor list; K+0:15 → 0:40) then `/spec` (K+0:40 → 1:00). Both are typed by the human; everything they do is in the skills. Exit: `/spec`'s commit and hand-off are done.
 
-## Phase 2 — Walking skeleton (K+0:50 → K+10)
+## Phase 2 — Walking skeleton (K+1:00 → K+10)
 
 Entry: `PHASE: 2`.
 - The walking skeleton is the ugliest possible version of the exact demo path working end to end, built by copying the example feature (CLAUDE.md → How this codebase is wired): tables → endpoints → smoke checks → seed rows → the screens a judge sees, on the UI kit's defaults. Nothing else — no design pass, no nice-to-haves.
 - As soon as the path works once, write `frontend/e2e/demo_path.py` (start from `frontend/e2e/demo_path.example.py`): URL as `sys.argv[1]`, exits non-zero on any failed step; it replays SPEC.md's demo script and asserts what a judge sees at each step. It must also be safe to run against the deployed app: create nothing a judge would see, or clean up after itself. `/check` runs it from then on against a throwaway backend holding `smoke_test.py`'s rows plus `seed_project_data`'s.
+- The idea's core piece proves impossible — not merely hard — before K+4: say so and offer the `RUNNER-UP` line from CLAUDE.md → Decisions in one AskUserQuestion (Away mode: a `WAITING ON YOU` line). After K+4 never switch ideas; cut scope instead.
 - Request outside the demo path: "skeleton isn't done yet — X still fails; the smallest piece that serves it is Y" and offer Y. If they accept waiting ("later"): add it to SPEC.md and CLAUDE.md → Scope nice-to-haves now, build nothing. If they insist: push back once, never twice, then build it per CLAUDE.md → Workflow's feature-request rule, as its own commit after the current skeleton step is committed.
 Exit (milestone 1): `/check` green including `demo_path.py`, the template's EXAMPLE feature removed (every piece CLAUDE.md lists — the project must contain only its own code), and the human clicked through the demo on localhost. Write `PHASE: 3 — milestone 1 done at hour N`.
 Cut rule — past K+10 and not there, or earlier when CLAUDE.md's scope guard says the skeleton won't make K+10: cut the must-have whose demo step is last in the script and furthest from the wow moment — shorten SPEC.md's demo script and `demo_path.py` to match, move it to the top of nice-to-haves, say "Cutting X: it's step 5 of 5, the wow moment is step 3" — repeat until green. In Away mode, don't cut: write `WAITING ON YOU: cut decision (skeleton not green at K+10)` and keep building.
