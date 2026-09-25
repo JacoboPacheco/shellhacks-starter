@@ -15,13 +15,13 @@ Entry: SPEC.md does not exist.
 - Confirm setup: `backend/venv`, `backend/.env` with `JWT_SECRET` (and `GEMINI_API_KEY` if the idea uses AI), `frontend/node_modules`, and `frontend/.env` with the two `VITE_DEMO_*` lines uncommented (not a secret — copy `frontend/.env.example` and create it yourself). Missing pieces: `python -m venv backend/venv`, `backend/venv/Scripts/pip install -r backend/requirements.txt`, `npm install --prefix frontend`; the human creates `backend/.env` and pastes keys.
 - `/check` must end `ALL CHECKS PASSED` with no `SKIPPED` browser section. If SKIPPED: `python -m pip install playwright && python -m playwright install chromium`; if the download fails on venue wifi, ask the human to switch to the phone hotspot and retry now — Phase 0 doesn't exit with SKIPPED.
 - CLAUDE.md → "Sponsor / company challenges to target" still a placeholder: ask the human for the list and paste it in.
-Exit: check green, sponsors written. Already inside `/spec` → continue it; otherwise say: switch `/model` to the bigger model and type `/spec <idea>`.
+Exit: check green, sponsors written. Already inside `/ideas` or `/spec` → continue it; otherwise say: switch `/model` to the bigger model, then type `/ideas` if there's no idea yet, or `/spec <idea>` if there is.
 
-## Phase 1 — Spec (K+0:15 → K+0:35)
+## Phase 1 — Idea and spec (K+0:15 → K+0:50)
 
-The `/spec` skill, typed by the human; everything it does is in the skill. Exit: the skill's commit and hand-off are done.
+`/ideas` (only when the human has no idea, or wants their candidates scored against the sponsor list; K+0:15 → 0:30) then `/spec` (K+0:30 → 0:50). Both are typed by the human; everything they do is in the skills. Exit: `/spec`'s commit and hand-off are done.
 
-## Phase 2 — Walking skeleton (K+0:35 → K+10)
+## Phase 2 — Walking skeleton (K+0:50 → K+10)
 
 Entry: `PHASE: 2`.
 - The walking skeleton is the ugliest possible version of the exact demo path working end to end, built by copying the example feature (CLAUDE.md → How this codebase is wired): tables → endpoints → smoke checks → seed rows → the screens a judge sees, on the UI kit's defaults. Nothing else — no design pass, no nice-to-haves.

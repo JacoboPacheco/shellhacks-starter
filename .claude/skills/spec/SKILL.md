@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 The user has an idea: $ARGUMENTS
 
-Do not propose ideas of your own. Your job is to pressure-test theirs and turn it into a spec that can be built in the time left.
+Do not propose ideas of your own. Your job is to pressure-test theirs and turn it into a spec that can be built in the time left. If `$ARGUMENTS` is empty and CLAUDE.md → Idea is still a placeholder, stop and say: "no idea yet — type /ideas first."
 
 **The lens for every question — what wins here.** ShellHacks judges on five equally weighted criteria: Completion (does it work), Originality (is it new or a twist), Design (how it looks and feels), Technology (what's under the hood and how well it's used), Practicality (could a real person use it). Judges grade what they see work in a few minutes — not code quality, not pitch polish. The last two years of winners share: a real problem a judge recognizes in one sentence; a live demo with one moment that makes a judge react; one genuinely technical piece (vision, AI, real-time, hardware) doing real work, not bolted on; polish on a small scope over breadth; a clear audience, often an underserved one; when going for a sponsor prize, the sponsor's tech used meaningfully. Push the spec toward one wow moment that works end to end, and cut whatever doesn't serve it.
 
